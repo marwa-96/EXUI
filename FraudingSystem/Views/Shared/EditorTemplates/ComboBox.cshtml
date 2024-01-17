@@ -1,0 +1,55 @@
+﻿@using Kendo.Mvc.UI
+@model int?
+@{
+    var fieldName = ViewData.TemplateInfo.HtmlFieldPrefix;
+    var SplitFile = fieldName.Split('_');
+    var ControlName = SplitFile[0];
+    var FilterFunction = "Filter" + SplitFile[0];
+    var ControllerName = SplitFile[1];
+    var ActionName = SplitFile[2];
+    var ServerFiltering = Convert.ToBoolean(SplitFile[3]);
+    var Placeholder ="";
+}
+@(Html.Kendo().ComboBoxFor(m => m)
+                      .Name(@ControlName)
+                      .DataTextField("Text")
+                      .DataValueField("Value")
+        //.Events(x => x.Select("SelectEventCMB"))
+        //.HeaderTemplate("<div class='dropdown-header' style='width:500px'><span class='k-widget k-header'  style='margin-right:30px'>Code</span><span class='k-widget k-header'>Name</span></div>")
+                      .Template("# if (data.Code) { # <span class='k-state-default'  style='margin-right:10px'>#: data.Code #</span># } # <span class='k-state-default'>#: data.Text #</span>")
+                      .AutoBind(false)
+                              .Placeholder(Placeholder)
+                      .HighlightFirst(true)
+                      .Filter(FilterType.Contains)
+                          .HtmlAttributes(new { style = "width:100%; max-width:3000px;left:0;margin:0 ;height:30px" })
+                      .DataSource(source =>
+                         {
+                             source.Read(read =>
+                             {
+                                 read.Action(ActionName.ToString(), ControllerName.ToString()).Data(@FilterFunction);
+                             }).ServerFiltering(@ServerFiltering);
+
+                         })
+                         .Events(e =>
+                         {
+                             e.Select("SelectEvent");
+                             e.DataBound("DataBoundEvent");
+                             e.Change("ChangeEvent");
+
+                         })
+)
+
+<script>
+    function SelectEvent(e) {
+        //if (!e.sender.dataItem()) {
+        //    $("#" + e.sender.element[0].id).data("kendoComboBox").value(null)
+        //}
+    }
+    $("#@ControlName").change(function (e) {
+        if ($("#@ControlName").data("kendoComboBox").value() && $("#@ControlName").data("kendoComboBox").selectedIndex == -1) {
+            $("#@ControlName").data("kendoComboBox").value(null)
+            $("#@ControlName").data("kendoComboBox").text("");
+            $("#@ControlName").trigger("change");
+        }
+    })
+</script>

@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Employee activity page</title>
+	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<!-- Custom Scrollbar Style -->
+	<link rel="stylesheet" href="css/jquery.mCustomScrollbar.css" />
+	<!-- jPages Style -->
+	<link rel="stylesheet" href="css/jPages.css">
+    <!-- Styles -->
+    <link href="css/style.css" rel="stylesheet">
+	<!-- FontAwesome -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <!-- Bootstrap Checkbox Style -->
+    <link rel="stylesheet" href="css/bootstrap-toggle.min.css">
+    <!-- Datepicker Style -->
+    <link href="css/datedropper.css" rel="stylesheet">
+
+    <link href="css/clockpicker.css" rel="stylesheet">
+
+  </head>
+  <body>
+	
+	<!-- Notification Modals -->
+
+		<!-- Activity Notification -->
+
+		<div class="modal fade" id="activityNoti" tabindex="-1" role="dialog" aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h2 class="modal-title">ACTIVITY ALERT</h2>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid">
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Employee Name</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>Mohamed Mokhtar</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Employee Position</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>UI Developer</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Activity</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>Development</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Project</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>Employee work life</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Activity Type</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>Task</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Status</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>Inprogress</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Description</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3 desc">
+			      			<span>
+			      			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+			      			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			      			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+			      			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+			      			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+			      			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			      			</span>
+		      			</div>
+		      		</div>
+		      	</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!-- End Activity Notification -->
+
+		<!-- Leave Notification -->
+
+		<div class="modal fade" id="leaveNoti" tabindex="-1" role="dialog" aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h3 class="modal-title">LEAVE ALERT</h3>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid">
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Employee Name</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>Mohamed Mokhtar</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Employee Position</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>UI Developer</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Type</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>Permission</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Description</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3 desc">
+			      			<span>
+			      			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+			      			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+			      			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+			      			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+			      			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+			      			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			      			</span>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Start Date</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>10-04-2015</span></div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>End Date</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3"><span>10-04-2015</span></div>
+		      		</div>
+		      	</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!-- End Leave Notification -->
+
+		<!-- New Employee Register Notification -->
+
+		<div class="modal fade" id="registerNoti" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h3 class="modal-title">NEW EMPLOYEE ALERT</h3>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid">
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Employee Name</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3">
+		      				<input type="text" value="Mohamed Mokhtar" readonly>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>User Name</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3">
+		      				<input type="text" value="Mmokhtar" readonly>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Hiring Date</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3">
+		      				<input type="text" value="15-03-2015" readonly>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Photo</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3 desc">
+			      			<img src="images/employee.jpg" alt="">
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Birth Date</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3">
+		      				<input type="text" value="20-08-1988" readonly>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Mobile Number</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3">
+		      				<input type="text" value="01012345678" readonly>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Position</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3">
+		      				<select>
+		      					<option>One</option>
+		      					<option>Two</option>
+		      					<option>Three</option>
+	      						<option>Four</option>	
+		      				</select>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Department</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3">
+		      				<select>
+		      					<option>One</option>
+		      					<option>Two</option>
+		      					<option>Three</option>
+		      					<option>Four</option>
+		      				</select>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Manager</span></div>
+		      			<div class="col-sm-6 col-sm-offset-3">
+		      				<select>
+		      					<option>One</option>
+		      					<option>Two</option>
+		      					<option>Three</option>
+		      					<option>Four</option>
+		      				</select>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-6 save-btn">
+					        <button type="button">Save</button>
+		      			</div>
+		      			<div class="col-sm-6">
+		      				<button type="button" data-dismiss="modal">Cancel</button>
+		      			</div>
+		      		</div>
+		      	</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+		<!-- End New Employee Register Notification -->
+
+	<!-- End Notification Modals -->
+	
+	<!-- Action Buttons Modals -->
+
+		<!-- New Activity Modal -->
+		<div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h2 class="modal-title">NEW ACTIVITY</h2>
+		        <div class="modal-img"><img src="images/modals/modal-img.png"></div>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid">
+		      		<div class="row">
+		      			<div class="col-md-6">
+		      				<div class="form-group">
+							    <label for="activityTitle">Title</label>
+							    <input type="text" id="activityTitle">
+							</div>
+		      			</div>
+		      			<div class="col-md-6">
+		      				<div class="form-group">
+							    <label for="activityType">Type</label>
+							    <select id="activityType">
+		      					<option>One</option>
+		      					<option>Two</option>
+		      					<option>Three</option>
+		      					<option>Four</option>
+		      				</select>
+							</div>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-md-12">
+		      				<div class="form-group">
+							    <label for="activityDesc">Description</label>
+							    <textarea rows="10" id="activityDesc"></textarea>
+							</div>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-md-6">
+		      				<div class="row">
+			      				<div class="col-md-6">
+				      				<div class="form-group">
+									    <label for="dateStart">Start Date</label>
+									    <input type="text" id="dateStart" placeholder="Select Date">
+									</div>
+								</div>
+								<div class="col-md-4">
+				      				<div class="form-group">
+									    <label for="timeStart">Start Time</label>
+									    <input type="text" id="timeStart" placeholder="Select Time">
+									</div>
+								</div>
+							</div>
+		      			</div>
+		      			<div class="col-md-6">
+		      				<div class="row">
+			      				<div class="col-md-6  col-md-offset-2">
+				      				<div class="form-group">
+									    <label for="dateEnd">End Date</label>
+									    <input type="text" id="dateEnd" placeholder="Select Date">
+									</div>
+								</div>
+								<div class="col-md-4">
+				      				<div class="form-group">
+									    <label for="timeEnd">End Time</label>
+									    <input type="text" id="timeEnd" placeholder="Select Time">
+									</div>
+								</div>
+							</div>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-md-6">
+					      <input type="checkbox" data-toggle="toggle" data-onstyle="success" data-width="130" data-style="custom" data-on="External" data-off="Not External">
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="activity-modal-btns">
+		      				<button type="button" data-dismiss="modal">Save &#38; Start</button>
+		      				<button type="button" data-dismiss="modal">Save &#38; Close</button>
+		      				<button type="button">Reset</button>
+		      				<button type="button" data-dismiss="modal">Close</button>
+		      			</div>
+		      		</div>
+		      	</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- End New Activity Modal -->
+
+		<!-- Leaves Modal -->
+		<div class="modal fade" id="leaveModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h2 class="modal-title">LEAVE</h2>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid">
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Type</span></div>
+		      			<div class="col-sm-8 col-sm-offset-1">
+		      				<input type="text" value="permission" readonly>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Submit Date</span></div>
+		      			<div class="col-sm-8 col-sm-offset-1">
+		      				<input type="text" value="01-04-2015" readonly>
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Date From</span></div>
+		      			<div class="col-sm-8 col-sm-offset-1">
+		      				<input type="text" id="leaveDate_from">
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Date To</span></div>
+		      			<div class="col-sm-8 col-sm-offset-1">
+		      				<input type="text" id="leaveDate_to">
+		      			</div>
+		      		</div>
+		      		<div class="row">
+		      			<div class="col-sm-3"><span>Reason</span></div>
+		      			<div class="col-sm-8 col-sm-offset-1">
+		      				<textarea rows="10"></textarea>
+		      			</div>
+		      		</div>
+					<table class="table table-bordered table-hover">
+						<thead>
+							<tr>
+								<th>Submit Date</th>
+								<th>Reason</th>
+								<th>From</th>
+								<th>To</th>
+								<th>Duration</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+							</tr>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+							</tr>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="row">
+		      			<div class="col-sm-6">
+		      				<button type="button">Add</button>
+		      			</div>
+		      			<div class="col-sm-6">
+		      				<button type="button" data-dismiss="modal">Close</button>
+		      			</div>
+		      		</div>
+		      	</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- End Leaves Modal -->
+
+		<!-- History Modal -->
+		<div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-hidden="true">
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h2 class="modal-title">HISTORY</h2>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid">
+		      		<div class="row">
+		      			<div class='col-md-5'>	            
+							<div class="form-group">
+							    <label for="filterStart">From</label>
+							    <input type="text" id="filterStart">
+							</div>
+					    </div>
+					    <div class='col-md-5'>	            
+							<div class="form-group">
+							    <label for="filterEnd">To</label>
+							    <input type="text" id="filterEnd">
+							</div>
+					    </div>
+					    <div class="col-md-2">
+					    	<button type="button">Filter</button>
+					    </div>
+		      		</div>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Title</th>
+								<th>Type</th>
+								<th>Project</th>
+								<th>Status</th>
+								<th>Start Time</th>
+								<th>End Time</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+							</tr>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+							</tr>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+							</tr>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+							</tr>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+							</tr>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+							</tr>
+							<tr>
+								<td>01-04-2015</td>
+								<td>Permission</td>
+								<td>05-03-2015, 01:00 p.m</td>
+								<td>05-03-2015, 04:00 p.m</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+								<td>3 Hours</td>
+							</tr>
+						</tbody>
+					</table>
+		      	</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- End History Modal -->
+
+		<!-- Hold timer & Description Modal -->
+		<div class="modal fade" id="timerModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard=false>
+		  <div class="modal-dialog modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header">
+<!-- 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+		        <div class="img-container"></div>
+		        <div class="timer-container">
+					<div class="time-digits">
+						<span class="hours">00</span>
+						<span class="separate">:</span>
+						<span class="mins">00</span>
+						<span class="separate">:</span>
+						<span class="secs">00</span>
+						<h2>Break</h2>
+					</div>
+					<button type="button" data-dismiss="modal">Resume</button>
+				</div>
+		      </div>
+		      <div class="modal-body">
+		      	<div class="container-fluid">
+		      		<div class="row">
+			      		<div class="col-md-3">
+			      			<h2>Description</h2>
+			      		</div>
+						<div class="col-md-9">
+							<textarea rows="7"></textarea>
+						</div>
+					</div>
+		      	</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+		<!-- End Hold Timer & Description Modal -->
+
+	<!-- End Action Buttons Modals -->
+
+    
+
+	<div class="sidebar"><!-- Team Log -->
+		<div class="sidebar-head">
+			<img src="images/employee.jpg" alt="">
+			<span>Mohamed Mokhtar</span>
+			<div class="btn-group">
+				<a data-target="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false"><span class="badge">30</span><i class="fa fa-lg fa-bell-o"></i></a>
+				<ul class="dropdown-menu" role="menu"><!-- Notification Dropdown -->
+					<li>
+						<a href="#activityNoti" data-toggle="modal" class="activity-noti activity-noti-color"><strong>Mohamed Mokhtar</strong> activity notification</a>
+					</li>
+					<li>
+						<a href="#leaveNoti" data-toggle="modal" class="leave-noti leave-noti-color"><strong>Mohamed Mokhtar</strong> leave notification</a>
+					</li>
+					<li>
+						<a href="#registerNoti" data-toggle="modal" class="register-noti register-noti-color"><strong>Mohamed Mokhtar</strong> new employee notification</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="sidebar-body">
+			<div class="log-wrap"><!-- Team Log Block -->
+				<div class="log-img activity-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="cancel-color">cancel</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div><!-- End Team Log Block -->
+			<div class="log-wrap">
+				<div class="log-img reason-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="done-color">finished</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img quick-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="active-color">started</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img leave-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="pending-color">paused</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img activity-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="cancel-color">cancel</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img reason-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="done-color">finished</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img quick-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="active-color">started</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img leave-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="pending-color">paused</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img leave-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="pending-color">paused</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img leave-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="pending-color">paused</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img leave-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="pending-color">paused</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img leave-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="pending-color">paused</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img leave-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="pending-color">paused</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+			<div class="log-wrap">
+				<div class="log-img leave-color"><img src="images/employee.jpg" alt=""></div>
+				<div class="log-text">
+					<h5>Hossam Samir</h5>
+					<p><span class="pending-color">paused</span> studying color theory at 02 : 00 : 30</p>
+				</div>
+			</div>
+		</div>
+	</div><!-- End Team Log -->
+
+	<div class="main-wrap">
+		<div class="container-fluid">
+			<nav class="navbar navbar-default">
+			  <div class="container-fluid">
+			      <a class="navbar-brand" href="#"><img src="images/logo.png" alt="logo"></a>
+			      <div class="main-btn">
+					<button type="button" data-toggle="modal" data-target="#newModal"><i class="fa fa-2x fa-pencil"></i>New Activity</button>
+					<button type="button" data-toggle="modal" data-target="#historyModal"><i class="fa fa-2x fa-clock-o"></i>History</button>
+					<button type="button"><i class="fa fa-2x fa-moon-o"></i>End Day</button>
+					<button data-target="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false"><i class="fa fa-2x fa-exclamation-triangle"></i>Leaves</button>
+					<ul class="dropdown-menu" role="menu">
+					<li>
+						<a href="#leaveModal" data-toggle="modal" class="activity-noti">Permission</a>
+					</li>
+					<li>
+						<a href="#leaveModal" data-toggle="modal" class="leave-noti">Emergency</a>
+					</li>
+					<li>
+						<a href="#leaveModal" data-toggle="modal" class="register-noti">Vacation</a>
+					</li>
+				</ul>
+			      </div>
+			  </div>
+			</nav>
+			<div class="row"><!-- Timers & Reasons Panels -->
+				<div class="col-md-7">
+					<div class="timer-panel">
+						<div class="task-timer">
+							<h4><i class="fa fa-flag"></i>CURRENT TASK TIMER</h4>
+							<span>Tuesday April 6</span>
+							<div class="timer-wrap">
+								<span>03</span>
+								<span>:</span>
+								<span>45</span>
+								<span>:</span>
+								<span>54</span>
+							</div>
+						</div>
+						<div class="quick-btn">
+							<button type="button" data-toggle="modal" data-target="#timerModal">Quick Meeting</button>
+							<button type="button" data-toggle="modal" data-target="#timerModal">Conference Call</button>
+							<button type="button" data-toggle="modal" data-target="#timerModal">Follow Up</button>
+						</div>
+						<div class="timers-wrap">
+							<div class="start-timer">
+								<h6>START TIMER</h6>
+								<div>
+									<span>03</span>
+									<span>:</span>
+									<span>45</span>
+									<span>:</span>
+									<span>54</span>
+								</div>
+							</div>
+							<div class="day-timer">
+								<h6>DAY TIMER</h6>
+								<div>
+									<span>03</span>
+									<span>:</span>
+									<span>45</span>
+									<span>:</span>
+									<span>54</span>
+								</div>
+							</div>
+							<div class="working-timer">
+								<h6>WORKING HRS</h6>
+								<div>
+									<span>03</span>
+									<span>:</span>
+									<span>45</span>
+									<span>:</span>
+									<span>54</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-5">
+					<div class="reasons-panel">
+						<div class="reasons-group">
+							<button type="button" data-toggle="modal" data-target="#timerModal"><span>Break</span></button>
+							<button type="button" data-toggle="modal" data-target="#timerModal"><span>Pray</span></button>
+							<button type="button" data-toggle="modal" data-target="#timerModal"><span>Phone</span></button>
+							<button type="button" data-toggle="modal" data-target="#timerModal"><span>Eat</span></button>
+						</div>
+						<div class="reasons-group-two">
+							<button type="button" data-toggle="modal" data-target="#timerModal"><span>Drink</span></button>
+							<button type="button" data-toggle="modal" data-target="#timerModal"><span>Smoke</span></button>
+							<button type="button" data-toggle="modal" data-target="#timerModal"><span>Idle</span></button>
+							<button type="button" data-toggle="modal" data-target="#timerModal"><span>Entertainment</span></button>
+						</div>
+						<div class="single-btn">
+							<button type="button" data-toggle="modal" data-target="#timerModal">Have a personal reason ? <span>click here !</span></button>
+						</div>
+					</div>
+				</div>
+			</div><!-- End Timers & Reasons Panels -->
+			<div class="row activities-wrap">
+				<div class="holder"></div>
+				<h4><i class="fa fa-lg fa-rocket"></i>ACTIVITIES</h4>
+				<div id="itemContainer">
+					<div class="col-md-6">
+						<div class="activity-panel active-color">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="active-color">ACTIVE</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-pause"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="activity-panel">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="pending-color">PENDING</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-play"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="activity-panel">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="cancel-color">CANCEL</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-play"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="activity-panel">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="done-color">DONE</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-play"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="activity-panel">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="ready-color">READY</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-play"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="activity-panel">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="pending-color">PENDING</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-play"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="activity-panel">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="pending-color">PENDING</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-play"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="activity-panel">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="pending-color">PENDING</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-play"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="activity-panel">
+							<div class="activity-header">
+								<div class="activity-title">
+									<h4>Wireframes<small>Employee work life project</small></h4>
+								</div>
+								<span id="pending-color">PENDING</span>
+								<div class="activity-btns">
+									<button type="button"><span class="glyphicon glyphicon-play"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-ok"></span></button>
+									<button type="button"><span class="glyphicon glyphicon-remove"></span></button>
+								</div>
+							</div>
+							<div class="activity-footer">
+								<div class="start-time">
+									<h6>Start time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="pause-time">
+									<h6>Pause time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+								<div class="end-time">
+									<h6>End time</h6>
+									<div>
+										<span>03</span>
+										<span>:</span>
+										<span>45</span>
+										<span>:</span>
+										<span>54</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="js/datedropper.js"></script>
+    <script src="js/clockpicker.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-toggle.min.js"></script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/jPages.min.js"></script>
+    <script src="js/script.js"></script>
+  </body>
+</html>

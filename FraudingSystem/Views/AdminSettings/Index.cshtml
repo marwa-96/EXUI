@@ -1,0 +1,105 @@
+﻿@using Kendo.Mvc.UI;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="group-box">
+    <div class="row" style="margin-left:10px;" id="MainLoginAdminDiv">
+        <div class="col-sm-5 col-xs-12">
+            @Html.Label("UserName") *
+        </div>
+        <div class="col-sm-7 col-xs-12">
+            @Html.Kendo().TextBox().Name("AdminUserName").HtmlAttributes(new { style = "width:100%" })
+        </div>
+        <div class="col-sm-5 col-xs-12">
+            @Html.Label("Password") *
+        </div>
+        <div class="col-sm-7 col-xs-12">
+            @Html.Kendo().TextBox().Name("AdminPassword").HtmlAttributes(new { type = "password", style = "width:100%" })
+        </div>
+        <div class="col-sm-12 col-xs-12">
+            @Html.Kendo().Button().Name("AdminLoginBtn").Content("Login").Events(e => e.Click("AdminLoginFun"))
+            <img src="@Url.Content("~/Content/dist/img/loading.gif")" alt="Alternate Text" class="loader" />
+        </div>
+    </div>
+</div>
+<script>
+    function AdminLoginFun(e) {
+        e.preventDefault();
+        $("#AdminUserName").attr("data-val-required", "Field Required")
+        $("#AdminPassword").attr("data-val-required", "Field Required")
+        $("#AdminPassword").attr("data-val-regex-pattern", "^.{6,}$")
+        $("#AdminPassword").attr("data-val-regex", "Password must be Minimum 6 characters, at least one letter and one number")
+
+        var validatable = $("#MainLoginAdminDiv").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            $.ajax({
+                url: "@Url.Content("/Account/AdminLogin")",
+                type: 'POST',
+
+            data: {
+                UserName: $("#AdminUserName").val(),
+                Password: $("#AdminPassword").val(),
+                },
+            dataType: 'json',
+            success: function (result) {
+                if (result.Result) {
+                    window.location.replace("/Ad_Page/Index");
+                    @*var url = '@Url.Action("Index", "Ad_Page")';
+                    window.location.href = url;*@
+                }
+                else {
+                    Show_Message("error", result.Message);
+                }
+                  
+            },
+                error: function (result) {
+                Show_Message("error", "Check Username and Password");
+            }
+        });
+    }
+    }
+</script>
+@*<div class="group-box">
+        <div class="row boxFixInKendo" style="padding: 0px;margin:10px">
+            <div class="col-sm-4 col-xs-12 " style="margin-top:20px">
+                @Html.Kendo().CheckBox().Name("AllowBeCustomer").Label("Is Customer ? ").HtmlAttributes(new { style = "width:100%;height:30px" })
+            </div>
+            <div class="col-sm-4 col-xs-12">
+                @(Html.Kendo().Button().Name("BtnSaveAllowBeCustomer").Events(e => e.Click("SaveAllowBeCustomer"))
+                                                                            .HtmlAttributes(new { type = "button", @class = "save" }).Content("Save"))
+                <img src="@Url.Content("~/Content/dist/img/loading.gif")" alt="Alternate Text" class="loader" />
+            </div>
+        </div>
+    </div>
+    <script>
+        $.ajax({
+            url: "@Url.Content("~/en/FraudSystem/DomainRouting/251112/GetAllowBeCustomerStatus")",
+            type: "POST",
+        dataType: 'json',
+        data: {},
+        success: function (result) {
+            $("#AllowBeCustomer").prop("checked", result.AllowBeCustomer);
+            isFirstTime = true;
+        },
+        error: function (result) {
+        }
+        })
+
+        function SaveAllowBeCustomer() {
+            $.ajax({
+                url: "@Url.Content("~/en/FraudSystem/DomainRouting/251112/SaveAllowBeCustomer")",
+                type: "POST",
+            dataType: 'json',
+            data: {
+                AllowBeCustomer: $('#AllowBeCustomer').is(":checked"),
+                }, success: function (result) {
+                    Show_Message("success", "Saved Successfully");
+
+                },
+            error: function (result) {
+            }
+        })
+        }
+    </script>*@

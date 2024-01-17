@@ -1,0 +1,139 @@
+:root {
+    --banner-color: #8E0909 ;
+    --form-background : #F4F4F4;
+    --white: #ffffff;
+    --button-color: #810D0D;
+    box-sizing: border-box;
+  
+  }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: rgb(122,118,118, 0.1) !important;
+    box-sizing: border-box;
+}
+
+  #page2{
+    margin-bottom: 0;
+  }
+  
+  .note{
+    color: var(--banner-color);
+    font-weight: bold;
+  }
+  .t-red{
+    color: var(--banner-color);
+  }
+  .btn-red{
+    background-color: var(--button-color);
+    color:var(--white)
+  }
+  .banner{
+    height: 50vh;
+    width: 100%;
+    background-image: url(Practice-Area-Banners-22.png);
+    background-position: center center;
+    background-size: cover;
+
+  }
+.innerBanner {
+    background-color: rgb(122,118,118, 0.5) !important;
+}
+.banner-form{
+  height: 40vh;
+  background-image: url(Practice-Area-Banners-22.png);
+  background-position: center center;
+  background-size: cover;
+}
+.innerBform{
+    background-color: rgba(142, 9, 9, 0.74) !important;
+}
+.row-margin{
+  margin:0;
+}
+.complainStep, .formCheck {
+    background-color: var(--white);
+}
+#formBg {
+    background-color: var(--white) !important;
+}
+.line {
+    width: 100%;
+    height: 1px;
+    border: 1px solid rgba(216, 46, 29, 1);
+    margin: 3px auto;
+}
+#UserInfo {
+    transform: translate(0,50%);
+  
+}
+
+.bgWelcome {
+    height:60vh;
+    width: 100%;
+    background-image: url('Practice-Area-Banners-22 1.png');
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+/*@media screen and (max-width: 550px)and (min-width: 350px) {
+    .bgWelcome{
+        display:none;
+    }
+
+
+}*/
+@media screen and (max-width: 765px)and (min-width: 350px) {
+    .bgWelcome {
+        display: none;
+    }
+}
+@media screen and (max-width: 380px)and (min-width: 250px) {
+    #UserInfo {
+        transform: translate(-7%,10%);
+        width:100%;
+    }
+}
+   
+
+
+@media screen and (max-width: 800px)and (min-width: 700px) {
+
+    .bgWelcome {
+        height: 70vh;
+        background-size: 100% 60%;
+    }
+}
+@media screen and (max-width: 900px)and (min-width: 800px) {
+
+    .bgWelcome {
+        height: 60vh;
+        background-size: 100% 40%;
+    }
+}
+@media screen and (max-width: 1000px)and (min-width: 900px) {
+
+    .bgWelcome {
+        height: 60vh;
+        background-size: 100% 70%;
+    }
+}
+@media screen and (max-width: 1050px)and (min-width: 1000px) {
+
+    .bgWelcome {
+        height: 80vh;
+        background-size: 100% 70%;
+    }
+}
+
+
+.btn-green {
+    width: 25%;
+    height: 20%;
+}
+
+.btnGray {
+    background-color: rgba(122, 118, 118, 0.3) !important;
+}
+
+    

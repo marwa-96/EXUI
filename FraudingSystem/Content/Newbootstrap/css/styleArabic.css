@@ -1,0 +1,69 @@
+:root {
+    --banner-color: #8E0909 ;
+    --form-background : #F4F4F4;
+    --white: #ffffff;
+    --button-color: #810D0D;
+    box-sizing: border-box;
+    direction: rtl;
+  }
+  body{
+    margin: 0;
+  }
+  #page2{
+    margin-bottom: 0;
+  }
+  /* .form1 ,.form2{
+    background-color: var(--form-background);
+  } */
+  .navbar1{
+    background-color: var(--banner-color);
+  }
+  .navbar2{
+    background-color: var(--banner-color);
+  }
+  .formCheck{
+    background-color: var(--form-background);
+   
+  }
+  /* .bg-icon{
+    background-color: var(--form-background);
+  } */
+  .note{
+    color: var(--banner-color);
+    font-weight: bold;
+  }
+  .t-red{
+    color: var(--banner-color);
+  }
+  .btn-red{
+    background-color: var(--button-color);
+    color:var(--white)
+  }
+  .a-style{
+  text-decoration: none;
+  }
+  .banner{
+    height: 50vh;
+    background-image: url(Practice-Area-Banners-22.png);
+    background-position: center center;
+    background-size: cover;
+    /* background-repeat: no-repeat; */
+  }
+  .innerBanner{
+    background-color:rgba(142, 9, 9, 0.74) ;
+  }
+.logo-img{
+  width:10%;
+}
+.banner-form{
+  height: 40vh;
+  background-image: url(Practice-Area-Banners-22.png);
+  background-position: center center;
+  background-size: cover;
+}
+.innerBform{
+  background-color:rgba(142, 9, 9, 0.74) ;
+}
+.row-margin{
+  margin:0;
+}

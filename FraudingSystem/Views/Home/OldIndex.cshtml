@@ -1,0 +1,940 @@
+﻿@using Kendo.Mvc.UI
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    bool IsCustomer = ViewBag.IsCustomer;
+    string MainPageTextAr = ViewBag.MainPageTextAr;
+    string MainPageTextEN = ViewBag.MainPageTextEN;
+
+}
+<style>
+    label {
+        display: block;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    form {
+        border: 3px solid #f1f1f1;
+    }
+
+    input[type=text], input[type=password] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+    .cancelbtn {
+        width: auto;
+        padding: 10px 18px;
+        background-color: #f44336;
+    }
+
+    .imgcontainer {
+        text-align: center;
+        margin: 24px 0 12px 0;
+    }
+
+    img.avatar {
+        width: 40%;
+        border-radius: 50%;
+    }
+
+    .container {
+        padding: 16px;
+    }
+
+    span.psw {
+        float: right;
+        padding-top: 16px;
+    }
+</style>
+<head>
+    <title>Whistleblowing System</title>
+</head>
+<div class="row boxFixInKendo">
+    <div class="col-sm-12 col-xs-12">
+        <div class="pull-right">
+            @*@if (!IsCustomer)
+                {
+                    <a href="#" onclick="OpenAdminLoginWindow()">Admin Login - دخول مدير النظام</a>
+                }*@
+        </div>
+
+    </div>
+</div>
+<div class="row boxFixInKendo">
+    <div class="group-box" id="Whistleblowingbrief" style="margin: 15px; background-color: #d8d8d87a; ">
+        <img src="~/Content/dist/img/brief.jpg" class="group-box-title" style="width:32px;height:30px;" />
+        <div style="overflow:hidden;">
+            <div class="col-xs-12" style="margin-top:10px;">
+
+                @if (MainPageTextEN != "" && MainPageTextEN != null)
+                {
+
+                    <p style=" color: #385590;" >
+                        @MainPageTextEN
+              </p>
+
+                }
+                else { 
+<p style=" color: #385590;">
+                        SAIB provides you with whistleblowing system & encourage all employees to blow the whistle on any illegal; or unethical acts that comes across you noting that the system will provide you with the necessary protection and complete confidentiality of your personal data. Whistleblowing serves as a vital method that enables organizations to access hard-to-reach information through traditional means and which helps in minimizing a wide range of risks such as misconduct …etc. and works on improving the work environment and ensure that all bank employees get their rights in a legitimate ways
+                    </p>
+                
+                }
+              
+                @if (MainPageTextAr != "" && MainPageTextAr != null)
+                {
+                    <p style=" color: #385590;" align="right" >
+                        @MainPageTextAr
+                    </p>
+                }
+                else { 
+                    <p style=" color: #385590;" align="right">
+                        يوفر لك بنك الشركة المصرفية العربية الدولية نظام الابلاغ عن الممارسات غير المشروعة و يحث جميع الموظفين على الابلاغ عن أي شيء غير قانوني أو اى فعل غير الأخلاقي ينمو الى علمك علما بأن النظام سوف يضمن لك توفير الحماية اللازمة والسرية الكاملة لبياناتك الشخصية. كما تعد أداة الإبلاغ عن المخالفات غير المشروعة وسيلة حيوية تمكن المؤسسات من الوصول إلى معلومات يصعب الوصول إليها من خلال الوسائل التقليدية و تساعد في تقليل العديد من المخاطر مثل سوء السلوك ... إلخ كما تعمل على تحسين بيئة العمل و ضمان حصول كافة الموظفين  على حقوقهم بطرق مشروعة.
+
+                    </p>
+                
+
+                }
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row boxFixInKendo">
+    <div class="group-box" id="CaseDiv" style="margin: 15px; padding: 30px 10px;">
+        @Html.Label("Whistleblowing - الإبلاغ عن المخالفات", new { @class = "group-box-title" })
+        <div class="col-sm-6 col-xs-12">
+            @Html.Kendo().CheckBox().Name("IsReportingPolicy").Label("Is Reading reporting policy ? -هل قرات سياسة الابلاغ  ؟ ").HtmlAttributes(new { style = "width:100%;height:30px;" })
+
+        </div>
+        <div class="col-sm-6 col-xs-12">
+
+            <a href="#" type="button" onclick="ViewAttachment()"> Reading Reporting Policy</a>
+        </div>
+        <div id="DivAddCase" style="display:none;">
+            <div class="row boxFixInKendo">
+
+
+                <div class="col-sm-6 col-xs-12" id="DivTitle">
+                    @Html.Label("Title - العنوان", new { id = "LblTitle" })
+                    @Html.Kendo().TextBox().Name("CaseTitle").HtmlAttributes(new { style = "width:100%;" })
+                </div>
+
+                <div class="col-sm-12 col-xs-12" id="DivCase">
+                    @Html.Label("Case - نص المشكلة", new { id = "LblCase" })
+                    @Html.TextArea("CaseBody", new { @class = "k-textbox", style = "width:100%!important;height:50px;" })
+                </div>
+                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" >
+                    @*@Html.Label("Personal Information (Optional) - البيانات الشخصية اختياري")
+                    @Html.TextArea("CasePersonalInfo", new { @class = "k-textbox", style = "width:100%!important;height:50px;" })*@
+                   <div id="DivPersonalInformation">
+
+                    @Html.Label("Personal Name - الاسم الشخصى", new { id = "LblPersonalInformation" })
+                    @Html.TextArea("Name", new { @class = "k-textbox", style = "width:100%!important;height:30px;" })
+                   </div>
+                    <div id="DivPersonalPhoneNumber" >
+
+                    @Html.Label("Personal Phone Number  - رقم الهاتف الشخصى", new { id = "LblPersonalPhoneNumber" })
+                    @Html.Kendo().TextBox().Name("Phone_Number").HtmlAttributes(new { style = "width:100%!important;height:30px;" })
+
+                    </div>
+                    @*// @Html.TextBox("Phone_Number", "", new { @class = "k-textbox", style = "width:100%!important;height:30px;" })*@
+
+
+
+
+                </div>
+                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivPeopleInvolved">
+                    @Html.Label("People Involved - الأشخاص المقدم ضدهم البلاغ", new { id = "LblPeopleInvolved" })
+                    @Html.TextArea("CasePeopleInvolved", new { @class = "k-textbox", style = "width:100%!important;height:90px;" })
+                </div>
+                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivWhere">
+                    @Html.Label("Where - مكان الواقعة", new { id = "LblWhere" })
+                    @Html.Kendo().TextBox().Name("CaseWhere").HtmlAttributes(new { style = "width:100%;" })
+                </div>
+                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivWhen">
+                    @Html.Label("When - توقيت الواقعة", new { id = "LblWhen" })
+                    @*@Html.Kendo().TextBox().Name("When").HtmlAttributes(new { style = "width:100%;" })*@
+                    @Html.Kendo().DateTimePicker().Name("When").HtmlAttributes(new { style = "width:100%;height:30px;", @class = "dropdownhight" })
+
+                </div>
+
+
+                <div class="col-sm-6 col-xs-12 " style="display:block;" id="DivAttachment">
+                    @Html.Label("Attachments", new { id = "LblAttachments" })
+                    @Html.Kendo().Upload().Name("CaseAttachments").Multiple(true).HtmlAttributes(new { style = "width:100%;height:30px" }).Messages(s => s.Select("Select File"))
+                    @Html.Label("Note:Please don't mention any informaion about your personal data or the case text in the attachment just supporting document", new { style = "padding-top:5px;color:rgba(0,0,0,.4);text-align: left;", @class = "GeneralBtnFloat" })
+                </div>
+            </div>
+            <div class="row boxFixInKendo" id="FraudCustomerDataDiv" style="display:none;margin-top:10px;">
+
+                <div class="group-box" id="CaseDiv" style="margin :15px;">
+                    @Html.Label("Customer Data - بيانات العميل", new { @class = "group-box-title" })
+                    <div style="">
+                        <div class="row boxFixInKendo">
+                            <div class="col-sm-12 col-xs-12">
+                                @Html.Label("Type")
+                                @Html.Partial("EditorTemplates/ComboBox", new ViewDataDictionary
+                                   {
+                                       TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "TypePersonalCaseId_General_FillTypePersonalCase_true" }
+                                   })
+                            </div>
+                            @*<div class="col-sm-6 col-xs-12 " style="margin-top:32px">
+                                @Html.Kendo().CheckBox().Name("IsCustomer").Label("Is Customer ? -هل انت عميل  ؟ ").HtmlAttributes(new { style = "width:100%;height:30px;" })
+
+                            </div>*@
+
+
+                            <div id="DivCustomer">
+                                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivCustomerId">
+                                    @Html.Label("Customer Id / Bank Account (Optional) - رقم العميل اختياري", new { id = "LblCustomerId" })
+                                    @Html.Kendo().TextBox().Name("FraudCustomerId").HtmlAttributes(new { style = "width:100%;" })
+                                </div>
+                                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivCustomerName">
+                                    @Html.Label("Customer Name (Optional) -   اسم العميل", new { id = "LblCustomerName" })
+                                    @Html.Kendo().TextBox().Name("CustomerName").HtmlAttributes(new { style = "width:100%;" })
+                                </div>
+                                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivCustomerNumber">
+                                    @Html.Label("Customer Number  (Optional) - رقم العميل", new { id = "LblCustomerNumber" })
+                                    @Html.Kendo().TextBox().Name("CustomerNumber").HtmlAttributes(new { style = "width:100%;" })
+                                </div>
+
+                            </div>
+
+                            <div id="DivEmployee" style="display:none;">
+
+                                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivEmployee_Code">
+                                    @Html.Label("Employee Code (Optional) - كود الموظف", new { id = "LblEmployee_Code" })
+                                    @Html.Kendo().TextBox().Name("EmployeeCode").HtmlAttributes(new { style = "width:100%;" })
+                                </div>
+                                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivEmployee_Name">
+                                    @Html.Label("Employee Name (Optional) - اسم الموظف", new { id = "LblEmployee_Name" })
+                                    @Html.Kendo().TextBox().Name("EmployeeName").HtmlAttributes(new { style = "width:100%;" })
+                                </div>
+                            </div>
+                            <div id="DivNonCustomer" style="display:none">
+
+                                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="Non_Customer_Name">
+                                    @Html.Label("Name (Optional) - اسم ", new { id = "LblNon_Customer_Name" })
+                                    @Html.Kendo().TextBox().Name("NonCustomerName").HtmlAttributes(new { style = "width:100%;" })
+                                </div>
+                                <div class="col-sm-6 col-xs-12" style="margin-top:10px;" id="DivNon_Customer_Phone_number">
+                                    @Html.Label("Phone number (Optional) - رقم التليفون ", new { id = "LblNon_Customer_Phone_number" })
+                                    @Html.Kendo().TextBox().Name("NonCustomerPhoneNumber").HtmlAttributes(new { style = "width:100%;" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row boxFixInKendo" style="margin-top:10px;">
+                <div class="col-sm-12 col-xs">
+                    <form style="margin-top:10px;">
+                        @*<div class="container">
+                            <label><b>Username</b></label>
+                            @Html.Kendo().TextBox().Name("CaseUserName").HtmlAttributes(new { style = "width:50%;" })
+
+                            <label><b>Password</b></label>
+                            @Html.Kendo().TextBox().Name("CasePassword").HtmlAttributes(new { type = "password", style = "width:50%;" })
+
+
+
+                        </div>*@
+
+                    </form>
+                </div>
+                <div class="col-sm-12 col-xs">
+                    @(Html.Kendo().Button()
+                                                                    .Name("BtnSaveCase")
+                                                                    .Events(e => e.Click("SaveCase"))
+                                                                    .HtmlAttributes(new { type = "button", style = "margin-top:10px ;", @class = "show" })
+                                                                    .Content("Send Your Case - ارسال البلاغ")
+                    )
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+</div>
+@(Html.Kendo().Window().Name("AdminLoginWindow").Title("Admin Login - دخول مدير النظام")
+                       .Resizable()
+                       .Modal(true)
+                       .Iframe(false)
+                       .Draggable(true)
+                       .Visible(false)
+                       .Scrollable(false)
+                       .Actions(actions => actions.Close())
+                       .Content(@<text>
+                        <div class="row" style="margin-left:10px;">
+                            <div class="col-sm-5 col-xs-12">
+                                @Html.Label("UserName") *
+                            </div>
+                            <div class="col-sm-7 col-xs-12">
+                                @Html.Kendo().TextBox().Name("AdminUserName").HtmlAttributes(new { style = "width:100%" })
+                            </div>
+                            <div class="col-sm-5 col-xs-12">
+                                @Html.Label("Password") *
+                            </div>
+                            <div class="col-sm-7 col-xs-12">
+                                @Html.Kendo().TextBox().Name("AdminPassword").HtmlAttributes(new { type = "password" })
+                            </div>
+                            <div class="col-sm-12 col-xs-12">
+                                @Html.Kendo().Button().Name("AdminLoginBtn").Content("Login").Events(e => e.Click("AdminLoginFun"))
+                                <img src="@Url.Content("~/Content/dist/img/loading.gif")" alt="Alternate Text" class="loader" />
+                            </div>
+                        </div>
+                    </text>)
+)
+
+@(Html.Kendo().Window().Name("UserLoginInfoWindow").Title("Trace Your Cases")
+                       .Resizable()
+                       .Modal(true)
+                       .Iframe(false)
+                       .Draggable(true)
+                       .Visible(false)
+                       .Scrollable(false)
+                       .Actions(actions => actions.Close())
+                       .Content(@<text>
+                        <div class="row boxFixInKendo" style="padding: 0px;margin:0px">
+                            <div class="row" style="margin:5px">
+                                <div class="col-sm-12 col-xs-12" style="color:red">
+
+                                    <p>
+                                        <h3>
+                                            Dear User, <br />
+                                            This is to confirm receiving your case, please copy the below information for follow up on the case
+                                        </h3>
+                                    </p>
+                                    <p >
+                                        <h3  align="right">
+                                            عزيزى المستخدم<br />
+                                            تم استلام الابلاغ ، برجاء نسخ المعلومات الخاصة الموضحة ادناه لمتابعة الابلاغ
+                                        </h3>
+                                    </p>
+
+
+                                </div>
+                                <div class="col-sm-12 col-xs-12" id="UserLoginInfoDiv">
+                                </div>
+                                @*<div class="col-sm-12 col-xs-12">
+                                        <p><h4> Happy to hear back from you and resolve your problem to achieve your maximum satisfaction.</h4></p>
+                                    </div>*@
+                            </div>
+                            <div class="row" style="margin:10px">
+                                <div class="col-xs-12">
+                                    <button class="btn deful" id="BtnCopyToPost" data-clipboard-target="#UserLoginInfoDiv">Copy To clipboard نسخ المعلومات</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </text>)
+)
+
+
+<script type="text/javascript">
+
+    var IsCustomer = JSON.parse('@Html.Raw(Json.Encode(IsCustomer))')
+    if (IsCustomer)
+        $("#FraudCustomerDataDiv").show();
+    else
+        $("#FraudCustomerDataDiv").hide();
+    function OpenAdminLoginWindow() {
+        $("#AdminLoginWindow").parent().css('width', "50%");
+        $("#AdminLoginWindow").parent().css('height', "Auto");
+        $("#AdminLoginWindow").data("kendoWindow").center().open();
+    }
+    function OpenTraceWindow() {
+        $("#UserLoginWindow").parent().css('width', "50%");
+        $("#UserLoginWindow").parent().css('height', "Auto");
+        $("#UserLoginWindow").data("kendoWindow").center().open();
+    }
+
+    function SaveCase(e) {
+        e.preventDefault();
+
+        var Title = search(formValue.Title, FormConfigurationArray);
+        var Case = search(formValue.Case, FormConfigurationArray);
+        var PersonalInformation = search(formValue.PersonalInformation, FormConfigurationArray);
+        var PeopleInvolved = search(formValue.PeopleInvolved, FormConfigurationArray);
+        var When = search(formValue.When, FormConfigurationArray);
+        var Where = search(formValue.Where, FormConfigurationArray);
+        var Customer_Id = search(formValue.Customer_Id, FormConfigurationArray);
+        var Customer_Name = search(formValue.Customer_Name, FormConfigurationArray);
+        var Customer_Number = search(formValue.Customer_Number, FormConfigurationArray);
+        var Non_Customer_Name = search(formValue.Non_Customer_Name, FormConfigurationArray);
+        var Non_Customer_Phone_number = search(formValue.Non_Customer_Phone_number, FormConfigurationArray);
+        var Employee_Code = search(formValue.Employee_Code, FormConfigurationArray);
+        var Employee_Name = search(formValue.Employee_Name, FormConfigurationArray);
+        var Personal_Phone_number = search(formValue.Personal_Phone_number, FormConfigurationArray);
+
+        ////////
+        if (Personal_Phone_number == null || Personal_Phone_number == "")
+            $("#Phone_Number").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Personal_Phone_number.IsRequired)
+                $("#Phone_Number").attr("data-val-required", "Field Required");
+            else
+                $("#Phone_Number").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+        if (Employee_Name == null || Employee_Name == "")
+            $("#EmployeeName").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Employee_Name.IsRequired && $("#TypePersonalCaseId").data("kendoComboBox").value() == 3)
+                $("#EmployeeName").attr("data-val-required", "Field Required");
+            else
+                $("#EmployeeName").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+        if (Employee_Code == null || Employee_Code == "")
+            $("#EmployeeCode").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Employee_Code.IsRequired && $("#TypePersonalCaseId").data("kendoComboBox").value() == 3)
+                $("#EmployeeCode").attr("data-val-required", "Field Required");
+            else
+                $("#EmployeeCode").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+        if (Non_Customer_Phone_number == null || Non_Customer_Phone_number == "")
+            $("#NonCustomerPhoneNumber").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Non_Customer_Phone_number.IsRequired && $("#TypePersonalCaseId").data("kendoComboBox").value() == 2)
+                $("#NonCustomerPhoneNumber").attr("data-val-required", "Field Required");
+            else
+                $("#NonCustomerPhoneNumber").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+        if (Non_Customer_Name == null || Non_Customer_Name == "")
+            $("#NonCustomerName").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Non_Customer_Name.IsRequired && $("#TypePersonalCaseId").data("kendoComboBox").value() == 2)
+                $("#NonCustomerName").attr("data-val-required", "Field Required");
+            else
+                $("#NonCustomerName").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+        if (Customer_Number == null || Customer_Number == "")
+            $("#CustomerNumber").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Customer_Number.IsRequired && $("#TypePersonalCaseId").data("kendoComboBox").value() == 1)
+                $("#CustomerNumber").attr("data-val-required", "Field Required");
+            else
+                $("#CustomerNumber").removeAttr("data-val-required", "Field Required");
+        }
+         ////////
+        if (Customer_Name == null || Customer_Name == "")
+            $("#CustomerName").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Customer_Name.IsRequired && $("#TypePersonalCaseId").data("kendoComboBox").value() == 1)
+                $("#CustomerName").attr("data-val-required", "Field Required");
+            else
+                $("#CustomerName").removeAttr("data-val-required", "Field Required");
+        }
+
+        ////////
+        if (Customer_Id == null || Customer_Id == "")
+            $("#FraudCustomerId").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Customer_Id.IsRequired && $("#TypePersonalCaseId").data("kendoComboBox").value() == 1)
+                $("#FraudCustomerId").attr("data-val-required", "Field Required");
+            else
+                $("#FraudCustomerId").removeAttr("data-val-required", "Field Required");
+        }
+
+        ////////
+        if (Title == null || Title == "")
+            $("#CaseTitle").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Title.IsRequired)
+                $("#CaseTitle").attr("data-val-required", "Field Required");
+            else
+                $("#CaseTitle").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+
+        if (Case == null || Case == "")
+            $("#CaseBody").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Case.IsRequired)
+                $("#CaseBody").attr("data-val-required", "Field Required");
+            else
+                $("#CaseBody").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+
+
+        if (PersonalInformation == null || PersonalInformation == "")
+            $("#CasePersonalInfo").removeAttr("data-val-required", "Field Required");
+        else {
+            if (PersonalInformation.IsRequired)
+                $("#CasePersonalInfo").attr("data-val-required", "Field Required");
+            else
+                $("#CasePersonalInfo").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+
+        if (PeopleInvolved == null || PeopleInvolved == "")
+            $("#CasePeopleInvolved").removeAttr("data-val-required", "Field Required");
+        else {
+            if (PeopleInvolved.IsRequired)
+                $("#CasePeopleInvolved").attr("data-val-required", "Field Required");
+            else
+                $("#CasePeopleInvolved").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+
+        if (When == null || When == "")
+            $("#When").removeAttr("data-val-required", "Field Required");
+        else {
+            if (When.IsRequired)
+                $("#When").attr("data-val-required", "Field Required");
+            else
+                $("#When").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+
+        if (Where == null || Where == "")
+            $("#CaseWhere").removeAttr("data-val-required", "Field Required");
+        else {
+            if (Where.IsRequired)
+                $("#CaseWhere").attr("data-val-required", "Field Required");
+            else
+                $("#CaseWhere").removeAttr("data-val-required", "Field Required");
+        }
+        ////////
+
+        //$("#CaseTitle").attr("data-val-required", "Field Required")
+        //$("#CaseBody").attr("data-val-required", "Field Required")
+
+        //$("#CasePeopleInvolved").attr("data-val-required", "Field Required")
+        //$("#When").attr("data-val-required", "Field Required")
+        //$("#CaseWhere").attr("data-val-required", "Field Required")
+
+        if ($("#Phone_Number").val() != "" && $("#Phone_Number").val() != null) {
+
+            $("#Phone_Number").attr("data-val-regex-pattern", "^01[0-2,5]{1}[0-9]{8}$")
+            $("#Phone_Number").attr("data-val-regex", "invalid phone number")
+        }
+
+        //if ($('#IsCustomer').is(":checked")) {
+        //    $("#FraudCustomerId").attr("data-val-required", "Field Required")
+        //    $("#FraudCustomerId").attr("data-val-regex-pattern", "^[0-9]*$")
+        //    $("#FraudCustomerId").attr("data-val-regex", "must be number")
+        //}
+
+        //else {
+        //    $("#FraudCustomerId").removeAttr("data-val-required", "Field Required")
+        //    $("#FraudCustomerId").removeAttr("data-val-regex-pattern", "^[0-9]*$")
+        //    $("#FraudCustomerId").removeAttr("data-val-regex", "must be number")
+        //}
+
+        var validatable = $("#CaseDiv").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            $("#BtnSaveCase").addClass("disabledButton");
+            var formdata = new FormData();
+            var Input = $("#CaseAttachments").data("kendoUpload").wrapper.find("input[type='file']") // for Kendo file uploder
+            var ExceedMaxFileSize = false;
+            Input.each(function (j) {
+                for (i = 0; i < Input[j].files.length; i++) {
+                    formdata.append(Input[j].files[i].name, Input[j].files[i]);
+                    if (Input[j].files[i].size > 400000) {
+                        ExceedMaxFileSize = true;
+                        break;
+                    }
+                }
+            })
+            if (ExceedMaxFileSize) {
+                Show_Message("info", "maximum size is exceeded");
+                $("#BtnSaveCase").removeClass("disabledButton");
+
+            }
+            else {
+                formdata.append("Title", $("#CaseTitle").val());
+                formdata.append("Case", $("#CaseBody").val());
+                formdata.append("PersonalInformation", $("#CasePersonalInfo").val());
+               
+                formdata.append("PhoneNumber", $("#Phone_Number").val());
+                formdata.append("PeopleInvolved", $("#CasePeopleInvolved").val());
+                formdata.append("When", $("#When").val() == null ? "" : $("#When").val());
+                formdata.append("Where", $("#CaseWhere").val());
+                //formdata.append("IsCustomer", $('#IsCustomer').is(":checked"));
+                formdata.append("CustomerId", $('#FraudCustomerId').val());
+
+                formdata.append("CustomerName", $('#CustomerName').val());
+                formdata.append("CustomerNumber", $('#CustomerNumber').val());
+                formdata.append("EmployeeCode", $('#EmployeeCode').val());
+                formdata.append("EmployeeName", $('#EmployeeName').val());
+                formdata.append("NonCustomerName", $('#NonCustomerName').val());
+                formdata.append("NonCustomerPhoneNumber", $('#NonCustomerPhoneNumber').val());
+
+                $.ajax({
+                    url: "@Url.Content("~/Home/SaveCase")",
+                    type: 'POST',
+                    processData: false,  // tell jQuery not to process the data
+                    contentType: false,   // tell jQuery not to set contentType
+
+                    data: formdata,
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.Result) {
+                            Show_Message("success", "Send Successfully");
+                            $("#BtnSaveCase").removeClass("disabledButton");
+                            $("#UserLoginInfoDiv").html("<table style='width: 82%;'><tr><td><h3>Report follow up link :  رابط متابعة البلاغ</h3></td><td><a href='" + result.BindingModel.RetuenURL + "' target='_blank'>" + result.BindingModel.RetuenURL + "</a></td></tr><tr><td><h3> Case No: رقم البلاغ</h3></td><td>" + result.BindingModel.CaseId + "</td></tr><tr><td><h3> User Name: اسم المستخدم</h3></td><td>" + result.BindingModel.UserName + "</td></tr><tr><td><h3> Password: الرقم السري</h3></td><td>" + result.BindingModel.Password + "</td></tr></table>");
+                            $("#UserLoginInfoWindow").parent().css('width', "80%");
+                            $("#UserLoginInfoWindow").parent().css('height', "Auto");
+                            $("#UserLoginInfoWindow").data("kendoWindow").center().open();
+                        }
+                        else {
+                            $("#BtnSaveCase").removeClass("disabledButton");
+                            Show_Message("error", result.Message);
+                        }
+
+
+                    },
+                    error: function (result) {
+                        Show_Message("error", "An Error Occured");
+                        $("#BtnSaveCase").removeClass("disabledButton");
+                    }
+                });
+            }
+
+        }
+    }
+    $("#UserLoginInfoWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $("#CaseTitle").val("");
+            $("#CaseBody").val("");
+            $("#CasePersonalInfo").val("");
+            $("#CasePeopleInvolved").val("");
+            $("#Phone_Number").val("");
+            $("#Name").val("");
+            $("#When").val(null);
+            $("#CaseWhere").val("");
+            $("#CaseUserName").val("");
+            $("#CasePassword").val("");
+            $('#FraudCustomerId').val("");
+            $('#CustomerName').val("");
+            $('#CustomerNumber').val("");
+            $('#EmployeeCode').val("");
+            $('#EmployeeName').val("");
+            $('#NonCustomerName').val("");
+            $('#NonCustomerPhoneNumber').val("");
+            //$("#IsCustomer").prop("checked", false);
+            $("#UserLoginInfoDiv").html("");
+            ResetKendoFileUpload();
+        }
+    })
+    function AdminLoginFun(e) {
+        e.preventDefault();
+        $("#AdminUserName").attr("data-val-required", "Field Required")
+        $("#AdminPassword").attr("data-val-required", "Field Required")
+        $("#AdminPassword").attr("data-val-regex-pattern", "^.{6,}$")
+        $("#AdminPassword").attr("data-val-regex", "Password must be Minimum 6 characters, at least one letter and one numberr")
+
+        var validatable = $("#AdminLoginWindow").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            $.ajax({
+                url: "@Url.Content("/Account/AdminLogin")",
+                type: 'POST',
+
+                data: {
+                    UserName: $("#AdminUserName").val(),
+                    Password: $("#AdminPassword").val(),
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        window.location.href = "Ad_Page/Index";
+                    }
+                    else
+                        Show_Message("error", result.Message);
+                },
+                error: function (result) {
+                    Show_Message("error", "An Error Occured");
+                }
+            });
+        }
+    }
+
+    var clipboard = new Clipboard('#BtnCopyToPost');
+    clipboard.on('success', function (e) {
+        e.clearSelection();
+        Show_Message("success", "Copied Successfully");
+
+    });
+    $(document).ready(function () {
+        $("#TypePersonalCaseId").data("kendoComboBox").value(1);
+        ReadAttachments();
+        $.ajax({
+            url: "@Url.Content("~/Home/GetDataFormConfiguration")",
+            type: 'POST',
+            data: {
+            },
+            dataType: 'json',
+            success: function (result) {
+                FormConfigurationArray = result;
+                CheckHiddenAndLableNameFields();
+            },
+            error: function (result) {
+            }
+        });
+    });
+    var formValue = {
+        Title: 0,
+        Case: 1,
+        PersonalInformation: 2,
+        PeopleInvolved: 3,
+        When: 4,
+        Where: 5,
+        Attachments: 6,
+        Customer_Id: 7,
+        Customer_Name: 8,
+        Customer_Number: 9,
+        Non_Customer_Name: 10,
+        Non_Customer_Phone_number: 11,
+        Employee_Code: 12,
+        Employee_Name: 13,
+        Personal_Phone_number: 14,
+
+    }
+    var FormConfigurationArray = [];
+    function search(Number, myArray) {
+        for (var i = 0; i < myArray.length; i++) {
+            if (myArray[i].PropId === Number) {
+                return myArray[i];
+            }
+        }
+    }
+    function CheckHiddenAndLableNameFields() {
+        var Title = search(formValue.Title, FormConfigurationArray);
+        var Case = search(formValue.Case, FormConfigurationArray);
+        var PersonalInformation = search(formValue.PersonalInformation, FormConfigurationArray);
+        var PeopleInvolved = search(formValue.PeopleInvolved, FormConfigurationArray);
+        var When = search(formValue.When, FormConfigurationArray);
+        var Where = search(formValue.Where, FormConfigurationArray);
+        var Attachments = search(formValue.Attachments, FormConfigurationArray);
+        var Customer_Id = search(formValue.Customer_Id, FormConfigurationArray);
+        var Customer_Name = search(formValue.Customer_Name, FormConfigurationArray);
+        var Customer_Number = search(formValue.Customer_Number, FormConfigurationArray);
+        var Non_Customer_Name = search(formValue.Non_Customer_Name, FormConfigurationArray);
+        var Non_Customer_Phone_number = search(formValue.Non_Customer_Phone_number, FormConfigurationArray);
+        var Employee_Code = search(formValue.Employee_Code, FormConfigurationArray);
+        var Employee_Name = search(formValue.Employee_Name, FormConfigurationArray);
+        var Personal_Phone_number = search(formValue.Personal_Phone_number, FormConfigurationArray);
+
+        ////////////
+        if (Title.IsHidden)
+            $("#DivTitle").hide()
+        else
+            $("#DivTitle").show()
+
+        if (Title.PropName != null && Title.PropName != "")
+            $("#LblTitle").text(Title.PropName);
+        ////////////
+
+        if (Case.IsHidden)
+            $("#DivCase").hide()
+        else
+            $("#DivCase").show()
+
+        if (Case.PropName != null && Case.PropName != "")
+            $("#LblCase").text(Case.PropName);
+
+        ////////////
+        if (PersonalInformation.IsHidden)
+            $("#DivPersonalInformation").hide()
+        else
+            $("#DivPersonalInformation").show()
+
+        if (PersonalInformation.PropName != null && PersonalInformation.PropName != "")
+            $("#LblPersonalInformation").text(PersonalInformation.PropName);
+        ////////////
+        if (PeopleInvolved.IsHidden)
+            $("#DivPeopleInvolved").hide()
+        else
+            $("#DivPeopleInvolved").show()
+
+        if (PeopleInvolved.PropName != null && PeopleInvolved.PropName != "")
+            $("#LblPeopleInvolved").text(PeopleInvolved.PropName);
+        ////////////
+        if (When.IsHidden)
+            $("#DivWhen").hide()
+        else
+            $("#DivWhen").show()
+
+        if (When.PropName != null && When.PropName != "")
+            $("#LblWhen").text(When.PropName);
+        ////////////
+        if (Where.IsHidden)
+            $("#DivWhere").hide()
+        else
+            $("#DivWhere").show()
+
+        if (Where.PropName != null && Where.PropName != "")
+            $("#LblWhere").text(Where.PropName);
+        ////////////
+        if (Personal_Phone_number.IsHidden)
+            $("#DivPersonalPhoneNumber").hide()
+        else
+            $("#DivPersonalPhoneNumber").show()
+
+        if (Personal_Phone_number.PropName != null && Personal_Phone_number.PropName != "")
+            $("#LblPersonalPhoneNumber").text(Personal_Phone_number.PropName);
+        //////////// 
+        if (Attachments.IsHidden)
+            $("#DivAttachment").hide()
+        else
+            $("#DivAttachment").show()
+
+        if (Attachments.PropName != null && Attachments.PropName != "")
+            $("#LblAttachments").text(Attachments.PropName);
+        ////////////
+        if (Customer_Id.IsHidden)
+              $("#DivCustomerId").hide()
+        else
+              $("#DivCustomerId").show()
+
+        if (Customer_Id.PropName != null && Customer_Id.PropName != "")
+            $("#LblCustomerId").text(Customer_Id.PropName);
+        ////////////
+        if (Customer_Name.IsHidden)
+            $("#DivCustomerName").hide()
+        else
+            $("#DivCustomerName").show()
+
+        if (Customer_Name.PropName != null && Customer_Name.PropName != "")
+            $("#LblCustomerName").text(Customer_Name.PropName);
+        ////////////
+        if (Customer_Number.IsHidden)
+            $("#DivCustomerNumber").hide()
+        else
+            $("#DivCustomerNumber").show()
+
+        if (Customer_Number.PropName != null && Customer_Number.PropName != "")
+            $("#LblCustomerNumber").text(Customer_Number.PropName);
+        ////////////
+        if (Non_Customer_Name.IsHidden)
+            $("#DivNon_Customer_Name").hide()
+        else
+            $("#DivNon_Customer_Name").show()
+
+        if (Non_Customer_Name.PropName != null && Non_Customer_Name.PropName != "")
+            $("#LblNon_Customer_Name").text(Non_Customer_Name.PropName);
+       
+        ////////////
+        if (Non_Customer_Phone_number.IsHidden)
+            $("#DivNon_Customer_Phone_number").hide()
+        else
+            $("#DivNon_Customer_Phone_number").show()
+
+        if (Non_Customer_Phone_number.PropName != null && Non_Customer_Phone_number.PropName != "")
+            $("#LblNon_Customer_Phone_number").text(Non_Customer_Phone_number.PropName);
+        ////////////
+        if (Employee_Code.IsHidden)
+            $("#DivEmployee_Code").hide()
+        else
+            $("#DivEmployee_Code").show()
+
+        if (Employee_Code.PropName != null && Employee_Code.PropName != "")
+            $("#LblEmployee_Code").text(Employee_Code.PropName);
+        ////////////
+        if (Employee_Name.IsHidden)
+            $("#DivEmployee_Name").hide()
+        else
+            $("#DivEmployee_Name").show()
+
+        if (Employee_Name.PropName != null && Employee_Name.PropName != "")
+            $("#LblEmployee_Name").text(Employee_Name.PropName);
+        ////////////
+
+    }
+
+     function ReadAttachments() {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/ReadAttachments")",
+            type: 'POST',
+            data: {},
+            dataType: 'json',
+            success: function (result) {
+                if (result.length > 0) {
+                    Attachments = result;
+                }
+            },
+            error: function (result) {
+            }
+        })
+
+    }
+    var Attachments = [];
+
+    function ViewAttachment() {
+       
+        if (Attachments[0] != null)
+            window.open(Attachments[0].URL);
+        else {
+            Show_Message("error", "Not Found File");
+        }
+
+
+    }
+
+    $("#IsReportingPolicy").change(function (e) {
+        e.preventDefault();
+        if ($('#IsReportingPolicy').is(":checked")) {
+            $("#DivAddCase").show();
+        }
+        else {
+            $("#DivAddCase").hide();
+        }
+
+
+    });
+
+    $("#TypePersonalCaseId").change(function (e) {
+        e.preventDefault();
+        $("#DivCustomer").hide();
+        $("#DivEmployee").hide();
+        $("#DivNonCustomer").hide();
+        if ($("#TypePersonalCaseId").data("kendoComboBox").value() == 1)
+            $("#DivCustomer").show();
+         if ($("#TypePersonalCaseId").data("kendoComboBox").value() == 2)
+             $("#DivNonCustomer").show();
+         if ($("#TypePersonalCaseId").data("kendoComboBox").value() == 3)
+             $("#DivEmployee").show();
+
+
+    });
+    function FilterTypePersonalCaseId() {
+        return {
+            Id: $("#TypePersonalCaseId").data("kendoComboBox").value(),
+            text: $("#TypePersonalCaseId").data("kendoComboBox").text(),
+        }
+    }
+    function DataBoundEvent(e) {
+        e.preventDefault();
+    }
+    function ChangeEvent(e) {
+        e.preventDefault();
+    }
+</script>

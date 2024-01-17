@@ -1,0 +1,3256 @@
+﻿@using Kendo.Mvc.UI;
+
+<button id="BtnDashboard" class="button" onclick="ShowDashBoardPannel()" style="font-size:large">Dashboard</button>
+<button id="BtnMainGrid" class="button" onclick="ShowMainGridPannel()" style="font-size:large">Cases Window</button>
+
+
+
+<style>
+
+    #PrivilegeGrid > div.k-grid-content {
+        height: 300px !important;
+    }
+</style>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Roles = (int[])ViewBag.Roles;
+
+    bool IsAdmin = ViewBag.IsAdmin;
+    bool IsCustomer = ViewBag.IsCustomer;
+}
+
+<script>
+    var Roles = JSON.parse('@Html.Raw(Json.Encode(Roles))')
+</script>
+
+@if (IsAdmin)
+{
+<div id="AppearMainGridPannel" style="display:none">
+    @Html.Hidden("FraudId", 0)
+    <div class="row boxFixInKendo">
+        <div class="col-sm-12 col-xs-12">
+            <div class="pull-right">
+                <a href="#" onclick="OpenChangePasswordWindow()">Change Your Password</a>&nbsp;&nbsp;&nbsp;
+                <a href="#" id="Settings" onclick="ShowAdminSettingsWindow()">Settings</a>&nbsp;&nbsp;&nbsp;
+                <a href="#" id="SystemLog" onclick="ShowSystemLogsWindow()">System log</a>&nbsp;&nbsp;&nbsp;
+                <a href="#" id="CaseLog" onclick="ShowCaseLogsWindow()">Case log</a>&nbsp;&nbsp;&nbsp;
+                <a href="#" id="CaseReplies" onclick="ShowCaseReplysWindow()">Case Replies</a>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row boxFixInKendo" style="margin-top:10px;">
+
+        <div class="col-sm-12 col-xs-12">
+            <h3 class="box-title">ColorGuide</h3>
+            <ul class="fc-color-picker" id="color-chooser" style="list-style: none;">
+                <li><div class="Read"><i class="fa fa-square" style="color: #ffffff; border-style: groove;"></i></div> Read</li>
+                <li><div class="Unread"><i class="fa fa-square" style="color: #dbdcdc; border-style: groove;"></i></div>Unread</li>
+
+            </ul>
+        </div>
+        <div class="col-sm-12 col-xs-12">
+
+            @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FraudCases>()
+                                                    .Name("AdminCases")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.Id).Title("No ").Width(120);
+                                                        columns.Bound(p => p.Title).Title("Title").Width(200).ClientTemplate("<a onclick='ShowCustomerCard(#=Id#)'>#=Title#</a>"); ;
+                                                        columns.Bound(p => p.Case).Width(200).Title("Case");
+                                                        columns.Bound(p => p.PeopleInvolved).Title("People Involved").Hidden().Width(200);
+                                                        columns.Bound(p => p.PersonalInformation).Width(150).Title("Personal Name").Hidden();
+                                                        columns.Bound(p => p.PhoneNumber).Width(150).Title("Personal Phone Number").Hidden();
+
+                                                        //columns.Bound(p => p.When).Title("When").Hidden().Width(200);
+                                                        columns.Bound(p => p._when).Title("When").Hidden().Width(200).ClientTemplate("#=_when?kendo.toString(kendo.parseDate(_when,'dd/MM/yyyy'),'dd/MM/yyyy'):''#");
+                                                        // columns.Bound(p => p.WhenCase).Title("when").Hidden().Width(200); columns.Bound(p => p.Where).Title("Where").Hidden().Width(200);
+                                                        columns.Bound(p => p.Status).Title("Status").Width(200);
+                                                        columns.Bound(p => p.UserName).Title("Assign To").Width(200);
+                                                        columns.Bound(p => p.LabelCase).Title("Classification ").Width(200);
+                                                        columns.Bound(p => p.IsCustomer).Title("Is Customer").ClientTemplate("# if (!data.IsCustomer ) {# No #}#" + " #if  (data.IsCustomer) {# yes #}#").Filterable(false).Hidden().Width(200);
+                                                        columns.Bound(p => p.CustomerId).Title("Customer ID /Bank Account ").Hidden().Width(200);
+                                                        columns.Bound(p => p.Note).Title("Note ").Width(200);
+                                                        columns.Bound(p => p.CustomerName).Title("Customer Name").Hidden().Width(200);
+                                                        columns.Bound(p => p.CustomerNumber).Title("Customer Number").Hidden().Width(200);
+                                                        columns.Bound(p => p.EmployeeCode).Title("Empolyee Code").Hidden().Width(200);
+                                                        columns.Bound(p => p.EmployeeName).Title("Employee Name").Hidden().Width(200);
+                                                        columns.Bound(p => p.NonCustomerName).Title("Name").Hidden().Width(200);
+                                                        columns.Bound(p => p.NonCustomerPhoneNumber).Title("Phone Number").Hidden().Width(200);
+
+
+                                                        columns.Bound(p => p.CreatedDate).Title("Creation Date").ClientTemplate("#=kendo.toString(kendo.parseDate(CreatedDate,'dd/MM/yyyy hh:mm:ss'),'dd/MM/yyyy hh:mm:ss') #").Width(200);
+                                                        columns.Bound("").Title("").ClientTemplate(
+                                                 "# if(true){# <button class='k-button Gbouttons k-button-icontext'  type='button' onclick=\"AdminReply('#:data.Id#')\">#}#"
+                                               + "# if(true){ #<i class='fa fa-reply'></i>" + "Reply" + "#}#"
+                                               + "</a>"
+
+                                               +"# if (true) { #<button class='k-button Gbouttons k-button-icontext'  type='button' onclick='ShowAdminAttachments(#:data.Id#)'>#}#"
+                                              + "# if (true) { #<i class='fa fa-print'></i>" + "Attachments" + "#}#"
+                                              + "</a>"
+
+                                              + "# if (Roles.indexOf(5) != -1) { #<button class='k-button Gbouttons k-button-icontext'  type='button' onclick='OpenChangeFraudDataWindow(#:data.Id#)'>#}#"
+                                                 + "# if (Roles.indexOf(5) != -1) { #<i class='fa fa-change'></i>" + "Update Case" + "#}#"
+
+                                                  + "# if (Roles.indexOf(6) != -1) { #<button class='k-button Gbouttons k-button-icontext'  type='button' onclick='PrintCase(#:data.Id#)'>#}#"
+                                                 + "# if (Roles.indexOf(6) != -1) { #<i  class='fa fa-print'></i>" + "Print Case" + "#}#"
+                                                 + "# if(Roles.indexOf(7) != -1){# <button class='k-button Gbouttons k-button-icontext'  type='button' onclick=\"ShowCaseLogWindow('#:data.Id#')\">#}#"
+                                              + "# if(Roles.indexOf(7) != -1){ #<i class='fa fa-book'></i>" + "Case Log" + "#}#"
+                                              + "</a>"
+                                              ).Width(200).ClientFooterTemplate("").Sortable(false).Filterable(false);
+
+                                                    })
+                                        .ToolBar(tools =>
+                                        {
+                                            tools.Custom().Text("Display Columns").HtmlAttributes(new { id = "AdminCasesColumnMenu", type = "button" });
+                                            tools.Excel().Text("Export Excel");
+                                        })
+                                        .ColumnMenu()
+                                     .Excel(excel => excel
+                                  .FileName("Cases.xlsx")
+                                    .AllPages(true)
+                                    .Filterable(true)
+                                    .ToString()
+                                    ).Events(events =>
+                                                {
+                                                    events.DataBound("onAdminCaseGridDataBound");
+                                                })
+                                            .Pageable(pageable => pageable
+                                                        .Messages(p =>
+                                                        {
+                                                            p.ItemsPerPage("items per page");
+                                                            p.Empty("No Item To Display");
+                                                            p.Display("{0} - {1} " + "From" + " {2} " + "item" + "");
+                                                        })
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(10))
+                                            .Sortable()
+                                    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                                .Resizable(resizable => resizable.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(130))
+                                            .HtmlAttributes(new { style = "height:auto" })
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .ServerOperation(false)
+                                                .PageSize(10)
+                                                .Events(events => events.Error("error_handler"))
+                                                .Model(model => model.Id(p => p.Id))
+                                                                                                        .Read(read => read.Action("AdminCases_Read", "Ad_Page"))
+                                            )
+
+                )
+        </div>
+    </div>
+    @(Html.Kendo().Window().Name("AdminCaseAttachmentsWindow").Title("Attachments")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                         .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+
+                                        <div class="row boxFixInKendo">
+                                            <div class="col-sm-12 col-xs-12">
+
+                                                @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FraudCasesAttachments>()
+                                                            .Name("AdminCaseAttachmentsGrid")
+                                                    .Columns(columns =>
+                                            {
+                                                columns.Bound(p => p.Id).Hidden();
+                                                columns.Bound(p => p.FraudId).Hidden();
+                                                columns.Bound(p => p.URL).Hidden();
+                                                columns.Bound(p => p.AttachmentName).Width(100).Title("Attachments");
+                                                columns.Command(command => { command.Custom("View").Click("GetAdminAttachments"); }).Title("Attachments").Width(80);
+                                            })
+
+                                            .AutoBind(false)
+                                            .Pageable(pageable => pageable
+
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(5))
+                                            .Sortable()
+                                            .Filterable()
+                                .Resizable(resizable => resizable.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(130))
+                                            .HtmlAttributes(new { style = "height:auto" })
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(5)
+                                                .Events(events => events.Error("error_handler"))
+                                                .Model(model => model.Id(p => p.Id))
+                                                                                                .Read(read => read.Action("AdminCaseAttachmentsGrid_Read", "Ad_Page").Data("SetFraudId"))
+
+                                            )
+
+                                                )
+                                            </div>
+
+                                        </div>
+
+                                    </text>)
+        )
+    @(Html.Kendo().Window().Name("AdminReplyWindow").Title("Reply")
+        // .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        <div class="group-box">
+                                            @Html.Label("Whistleblowing", new { @class = "group-box-title" })
+                                            <div style="overflow:hidden;">
+                                                <div id="AdminReplyCaseDiv">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="AdminUsersReplyDiv">
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="group-box" style="margin:15px;">
+                                                @Html.Label("Your Reply", new { @class = "group-box-title" })
+                                                <div style="overflow:hidden;">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        @Html.Label("Reply")
+                                                        @Html.TextArea("AdminReplyTextArea", new { @class = "k-textbox", style = "width:98%!important;height:80px;" })
+                                                    </div>
+                                                    <div class="col-sm-6 col-xs-12 " style="display:none;">
+                                                        @Html.Label("Attachments")
+                                                        @Html.Kendo().Upload().Name("ReplyAttachments").Multiple(true).HtmlAttributes(new { style = "width:100%;height:30px;display:none" }).Messages(s => s.Select("Select File"))
+                                                        @Html.Label("Note:Please don't mention any informaion about your personal data or the case text in the attachment just supporting document", new { style = "padding-top:5px;color:rgba(0,0,0,.4);text-align: left;", @class = "GeneralBtnFloat" })
+                                                    </div>
+                                                    <div class="col-sm-6 col-xs-12">
+
+                                                        @(Html.Kendo().Button()
+                                                                                .Name("BtnAdminReply")
+                                                                        .Events(e => e.Click("SaveAdminReply"))
+                                                                        .HtmlAttributes(new { type = "button", style = "margin-top:10px ;", @class = "show" })
+                                                                        .Content("Save")
+                                                        )
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </text>)
+        )
+    @(Html.Kendo().Window().Name("ChangePasswordWindow").Title("Change Password")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Scrollable(false)
+                                    .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        <div class="row" style="margin: 0px;">
+                                            <div class="col-md-4 col-sm-6 col-xs-12 col-md-offset-4 col-sm-offset-3">
+                                                <div class="group-box boxfix" style="margin-top:0px !important">
+                                                    @Html.Label("Change Password", new { id = "", @class = "group-box-title" })
+                                                    <div class="row boxFixInKendo" id="ChangePasswordDiv" style=" margin:0px">
+
+                                                        <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                                            @Html.Label("Old Password")*
+                                                            @Html.Kendo().TextBox().Name("OldPassword").HtmlAttributes(new { type = "password", style = "width:100%;" })
+                                                        </div>
+                                                        <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                                            @Html.Label("New Password") *
+                                                            @Html.Kendo().TextBox().Name("NewPassword").HtmlAttributes(new { type = "password", style = "width:100%;margin-bottom:5px;" })
+                                                        </div>
+                                                        <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                                            @Html.Label("Confirm Password") *
+                                                            @Html.Kendo().TextBox().Name("ConfirmPassword").HtmlAttributes(new { type = "password", style = "width:100%;margin-bottom:5px;" })
+                                                        </div>
+                                                        <div class="col-sm-12 col-xs-12">
+
+                                                            @Html.Kendo().Button().Name("ChangePassword").Content("Save").Events(e => e.Click("ChangePasswordSave")).HtmlAttributes(new { @class = "save" })
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </text>)
+        )
+    @(Html.Kendo().Window().Name("AdminSettingsWindow").Title("Settings")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Scrollable(false)
+                                    .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        @FraudSetting()
+                                    </text>)
+        )
+
+    @helper FraudSetting()
+    {
+        @(Html.Kendo().TabStrip()
+                              .Name("tabstripSettings")
+                              .TabPosition(TabStripTabPosition.Left)
+                              .Animation(animation =>
+                                    animation.Open(effect =>
+                                        effect.Fade(FadeDirection.In)))
+                                              .HtmlAttributes(new { @class = "boxFixInKendo" })
+                              .Items(tabstrip =>
+                              {
+                                  tabstrip.Add().Text("Status")
+                                  .Visible(((int[])ViewBag.Roles).Contains(8))
+                                      .Selected(true)
+                                      .Content(@<text>
+                                        @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FraudStatus>()
+                                                    .Name("StatusGrid")
+                                                    .Columns(columns =>
+                                            {
+                                                columns.Bound(p => p.Id).Hidden();
+                                                columns.Bound(p => p.Name).Title("Name").Width(150);
+                                                columns.Command(command => { command.Edit().Text("Edit").UpdateText("Save").CancelText("Cancel"); command.Destroy().Text("Delete"); }).Width(100);
+                                            })
+                                                            .ToolBar(tools =>
+                                    {
+                                        tools.Create().Text("Add");
+                                    })
+
+                                                            .Editable(editable =>
+                          {
+                              editable.Mode(GridEditMode.InLine);
+                              editable.DisplayDeleteConfirmation("Are you sure you want to delete this item ");
+                          })
+                                                       .Pageable(pageable => pageable
+
+                                                            .Refresh(true)
+                                                            .PageSizes(true)
+                                                             .ButtonCount(5))
+
+                                                    .Sortable()
+                                                                    .Filterable()
+                                                                    .Resizable(r => r.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(250))
+                                                .HtmlAttributes(new { style = "height:auto" })
+                                                    .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .PageSize(5)
+                                                                .Events(events => events.Error("error_handler").Sync("sync_handler"))
+                                                        //.Events(events => events.Error("error_handler"))
+                                                        .Model(model => model.Id(p => p.Id))
+                                                                .Create(update => update.Action("StatusGrid_Create", "Ad_Page"))
+                                                                .Read(read => read.Action("StatusGrid_Read", "Ad_Page"))
+                                                                .Destroy(update => update.Action("StatusGrid_Destroy", "Ad_Page"))
+                                                                .Update(update => update.Action("StatusGrid_Update", "Ad_Page"))
+                                            )
+                                        )
+
+                                    </text>);
+            @*tabstrip.Add().Text("Assign To")
+                                                    .Content(@<text>
+                              @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FraudEmployees>()
+                                          .Name("EmployeesGrid")
+                                          .Columns(columns =>
+                                  {
+                                      columns.Bound(p => p.Id).Hidden();
+                                      columns.Bound(p => p.Code).Title("Code").Width(100);
+                                      columns.Bound(p => p.Name).Title("Name").Width(150);
+                                      columns.Command(command => { command.Edit().Text("Edit").UpdateText("Save").CancelText("Cancel"); command.Destroy().Text("Delete"); }).Width(100);
+                                  })
+                                                  .ToolBar(tools =>
+                          {
+                              tools.Create().Text("Add");
+                          })
+
+                                                  .Editable(editable =>
+                {
+                    editable.Mode(GridEditMode.InLine);
+                    editable.DisplayDeleteConfirmation("Are you sure you want to delete this item ");
+                })
+                                             .Pageable(pageable => pageable
+
+                                                  .Refresh(true)
+                                                  .PageSizes(true)
+                                                   .ButtonCount(5))
+
+                                          .Sortable()
+                                                          .Filterable()
+                                                          .Resizable(r => r.Columns(true))
+                                          .Scrollable(scrolling => scrolling.Height(250))
+                                      .HtmlAttributes(new { style = "height:auto" })
+                                          .DataSource(dataSource => dataSource
+                                              .Ajax()
+                                              .PageSize(5)
+                                                      .Events(events => events.Error("error_handler").Sync("sync_handler"))
+                                              //.Events(events => events.Error("error_handler"))
+                                              .Model(model => model.Id(p => p.Id))
+                                                      .Create(update => update.Action("EmployeesGrid_Create", "Ad_Page"))
+                                                      .Read(read => read.Action("EmployeesGrid_Read", "Ad_Page"))
+                                                      .Destroy(update => update.Action("EmployeesGrid_Destroy", "Ad_Page"))
+                                                      .Update(update => update.Action("EmployeesGrid_Update", "Ad_Page"))
+                                  )
+                              )
+
+                                                  </text>);*@
+                                  tabstrip.Add().Text("Classification")
+                                  .Visible(((int[])ViewBag.Roles).Contains(9))
+
+                                                               .Content(@<text>
+                                        @(Html.Kendo().Grid<Ext_FraudingSystem.Models.LabelCases>()
+                                                    .Name("LabelCasesGrid")
+                                                    .Columns(columns =>
+                                            {
+                                                columns.Bound(p => p.Id).Hidden();
+                                                columns.Bound(p => p.Code).Title("Code").Width(100);
+                                                columns.Bound(p => p.Name).Title("Name").Width(150);
+                                                columns.Command(command => { command.Edit().Text("Edit").UpdateText("Save").CancelText("Cancel"); command.Destroy().Text("Delete"); }).Width(100);
+                                            })
+                                                            .ToolBar(tools =>
+                                    {
+                                        tools.Create().Text("Add");
+                                    })
+
+                                                            .Editable(editable =>
+                          {
+                              editable.Mode(GridEditMode.InLine);
+                              editable.DisplayDeleteConfirmation("Are you sure you want to delete this item ");
+                          })
+                                                       .Pageable(pageable => pageable
+
+                                                            .Refresh(true)
+                                                            .PageSizes(true)
+                                                             .ButtonCount(5))
+
+                                                    .Sortable()
+                                                                    .Filterable()
+                                                                    .Resizable(r => r.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(250))
+                                                .HtmlAttributes(new { style = "height:auto" })
+                                                    .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .PageSize(5)
+                                                                .Events(events => events.Error("error_handler").Sync("sync_handler"))
+                                                        //.Events(events => events.Error("error_handler"))
+                                                        .Model(model => model.Id(p => p.Id))
+                                                                        .Create(update => update.Action("LabelCasesGrid_Create", "Ad_Page"))
+                                                                        .Read(read => read.Action("LabelCasesGrid_Read", "Ad_Page"))
+                                                                        .Destroy(update => update.Action("LabelCasesGrid_Destroy", "Ad_Page"))
+                                                                        .Update(update => update.Action("LabelCasesGrid_Update", "Ad_Page"))
+                                            )
+                                        )
+
+                                                            </text>);
+                                  tabstrip.Add().Text("Show as a customer")
+                                  .Visible(((int[])ViewBag.Roles).Contains(10))
+
+                                         .HtmlAttributes(new { id = "AllowBeCustomerTabStrip", @class = "selectTabStrip" })
+                                                         .Content(@<text>
+                                            <div class="group-box">
+                                                <div class="row boxFixInKendo" style="padding: 0px;margin:10px">
+                                                    <div class="col-sm-4 col-xs-12 " style="margin-top:20px">
+                                                        @Html.Kendo().CheckBox().Name("AllowBeCustomer").Label(" Customer data ? ").HtmlAttributes(new { style = "width:100%;height:30px" })
+                                                    </div>
+                                                    <div class="col-sm-4 col-xs-12">
+                                                        @(Html.Kendo().Button().Name("BtnSaveAllowBeCustomer").Events(e => e.Click("SaveAllowBeCustomer"))
+                                                                        .HtmlAttributes(new { type = "button", @class = "save" }).Content("Save"))
+                                                        <img src="@Url.Content("~/Content/dist/img/loading.gif")" alt="Alternate Text" class="loader" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                        </text>);
+
+                                  tabstrip.Add().Text("Email Setting")
+                                  .Visible(((int[])ViewBag.Roles).Contains(11))
+
+                                 .HtmlAttributes(new { id = "EmailSettingTapStrip", @class = "selectTabStrip" })
+                                                 .Content(@<text>
+                                    <div class="group-box">
+                                        <div class="row boxFixInKendo" style="padding: 0px;margin:10px">
+                                            <div id="EmailConfigSection">
+                                                <div class="row boxFixInKendo">
+                                                    <div class="col-sm-4 col-xs-12" style="margin-bottom:15px">
+                                                        @*@Html.Hidden("EmailSetgtingsId", 0)*@
+
+
+                                                        @Html.DisplayName(" Host ")
+                                                        @Html.Kendo().TextBox().Name("Host").HtmlAttributes(new { style = "width:100%;height:30px" })
+
+                                                    </div>
+                                                    <div class="col-sm-4 col-xs-12" style="margin-bottom:15px">
+                                                        @Html.DisplayName(" Port ")
+                                                        @(Html.Kendo().NumericTextBox<int>()
+                                                                                                    .Name("Port")
+                                                                                                    .Format("3")
+
+                                                                                            .HtmlAttributes(new { style = "width: 100%;height:30px" })
+                                                        )
+
+                                                    </div>
+                                                     <div class="col-sm-4 col-xs-12 " style="margin-top:20px">
+                                                        @Html.Kendo().CheckBox().Name("EnableSsl").Label(" Enable Ssl ").HtmlAttributes(new { style = "width:100%;height:30px" })
+                                                    </div>
+
+                                                </div>
+                                                <div class="row" style="margin-bottom:15px">
+                                                    <div class="col-sm-4 col-xs-12 ">
+                                                        @Html.DisplayName("Email From")
+                                                        @Html.Kendo().TextBox().Name("EmailFrom").HtmlAttributes(new { style = "width:100%;height:30px" })
+                                                    </div>
+
+
+                                                    <div class="col-sm-4 col-xs-12 ">
+                                                        @Html.DisplayName("Subject")
+                                                        @Html.Kendo().TextBox().Name("Subject").HtmlAttributes(new { style = "width:100%;height:30px" })
+                                                    </div>
+                                                    <div class="col-sm-12 col-xs-12 ">
+                                                        @Html.DisplayName("Body")
+                                                        @Html.TextArea("Body", new { style = "width:100%;height:30px" })
+                                                    </div>
+                                                </div>
+                                                <div class="row" style="margin-bottom:15px">
+                                                    <div class="col-sm-4 col-xs-12 ">
+                                                        @Html.DisplayName("Username")
+                                                        @Html.Kendo().TextBox().Name("EmailUserName").HtmlAttributes(new { style = "width:100%;height:30px" })
+                                                    </div>
+                                                    <div class="col-sm-4 col-xs-12 ">
+                                                        @Html.DisplayName("Password")
+                                                        @Html.Kendo().TextBox().Name("EmailPassword").HtmlAttributes(new { style = "width:100%;height:30px", type = "password" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-xs-12 row" style="margin-bottom:10px">
+                @Html.Label("Email To Admins Email")
+                @(Html.Kendo().MultiSelect().Name("AdminsEmail")
+                                                            .Filter(FilterType.Contains)
+                                                                     .Events(s => s.Change("ChangeEvent"))
+                                                            .HtmlAttributes(new { style = "width: 100% ; hight : 30px" })
+                                                            .AutoBind(false)
+                                                            .DataTextField("Text")
+                                                            .DataValueField("Value")
+                                                            .DataSource(source =>
+                                                            {
+                                                                source.Read(read =>
+                                                                {
+                                                                    read.Action("FillEmailAdmin", "General").Data("FilterAdminsEmail"); //Set the Action and Controller name
+                                                                })
+                                                                .ServerFiltering(true);
+                                                            })
+                )
+                @Html.Label("Hint: You can select more than one value", new { style = "padding-top:5px;color:rgba(0,0,0,.4);", @class = "GeneralBtnFloat" })
+            </div>
+                                            <div class="col-sm-12 col-xs-12 row">
+                                                @Html.DisplayName("Email To")
+                                                @Html.Kendo().TextBox().Name("EmailTo").HtmlAttributes(new { style = "width:100%;height:30px" })
+                                                <p style="color:gray">Emails must be seperated by comma (,)</p>
+                                            </div>
+
+                                              <div class="col-sm-12 col-xs-12 row">
+                                                @Html.DisplayName("CC Email")
+                                               @(Html.Kendo().Grid<Ext_FraudingSystem.Models.CCEmail>()
+                                                    .Name("CCEmailGrid")
+                                                    .Columns(columns =>
+                                            {
+                                                columns.Bound(p => p.Id).Hidden();
+                                                columns.Bound(p => p.Email).Title("Email").Width(150);
+                                                columns.Command(command => { command.Edit().Text("Edit").UpdateText("Save").CancelText("Cancel"); command.Destroy().Text("Delete"); }).Width(100);
+                                            })
+                                                            .ToolBar(tools =>
+                                    {
+                                        tools.Create().Text("Add");
+                                    })
+
+                                                            .Editable(editable =>
+                          {
+                              editable.Mode(GridEditMode.InLine);
+                              editable.DisplayDeleteConfirmation("Are you sure you want to delete this item ");
+                          })
+                                                       .Pageable(pageable => pageable
+
+                                                            .Refresh(true)
+                                                            .PageSizes(true)
+                                                             .ButtonCount(5))
+
+                                                    .Sortable()
+                                                                    .Filterable()
+                                                                    .Resizable(r => r.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(250))
+                                                .HtmlAttributes(new { style = "height:auto" })
+                                                    .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .PageSize(5)
+                                                                .Events(events => events.Error("error_handler").Sync("sync_handler"))
+                                                        //.Events(events => events.Error("error_handler"))
+                                                        .Model(model => model.Id(p => p.Id))
+                                                                .Create(update => update.Action("CCEmailGrid_Create", "Ad_Page"))
+                                                                .Read(read => read.Action("CCEmailGrid_Read", "Ad_Page"))
+                                                                .Destroy(update => update.Action("CCEmailGrid_Destroy", "Ad_Page"))
+                                                                .Update(update => update.Action("CCEmailGrid_Update", "Ad_Page"))
+                                            )
+                                        )
+                                            </div>
+
+
+
+
+                                            <div class="col-sm-12 col-xs-12">
+                                                <div class="GeneralBtnFloat">
+                                                    @(Html.Kendo().Button()
+                                                                                    .Name("BtnSaveEmailSettings")
+                                                                                            .Events(e => e.Click("SaveEmailSettings"))
+                                                                                                    .HtmlAttributes(new { type = "button", @class = "save", id = "Emailnotification-triggerr", style = "float: right;" })
+                                                                                            .Content("Save"))
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                                </text>);
+
+                                  tabstrip.Add().Text("Create Admin User")
+                                  .Visible(((int[])ViewBag.Roles).Contains(12))
+
+                                                               .HtmlAttributes(new { id = "CreateAdminUserTabStrip", @class = "selectTabStrip" })
+                                                                               .Content(@<text>
+
+                                                                <div class="row boxFixInKendo">
+                                                                    <div class="col-sm-12 col-xs-12">
+
+
+                                                                        @(Html.Kendo().Grid<Ext_FraudingSystem.Models.VM_adUsRead>()
+                                                                    .Name("AdminUsersGrid")
+                                                                    .AutoBind(true)
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.Id).Hidden();
+                                                        columns.Bound(p => p.Name).Width(100).Title("User Name");
+                                                        columns.Bound(p => p.Email).Width(100).Title("User Email");
+                                                        columns.Bound("").Title("").Width(320).ClientTemplate(
+
+                                                    "# if (data.IsFirstAdminRow || data.isCurrent) { # <button class='k-button Gbouttons k-button-icontext'  type='button' onclick='Reset(#:data.Id#)'>#}#"
+                                                    + "# if (data.IsFirstAdminRow || data.isCurrent) { #<i class='k-icon k-edit'></i>Reset#}#"
+                                                    + "</a>"
+
+                                                    + "# if (data.IsFirstAdminRow || data.isCurrent) { # <button class='k-button Gbouttons k-button-icontext'  type='button' onclick=\"EditEmail('#:data.Id#','#:data.Email#')\">#}#"
+                                                    + "# if (data.IsFirstAdminRow || data.isCurrent) { #<i class='fa fa-pencil-square-o'></i>Edit Email#}#"
+                                                    + "</a>"
+                                                    ).Sortable(false);
+                                                    })
+                                                    .ToolBar(tools =>
+                                                    {
+                                                        tools.Custom().Text("Add").HtmlAttributes(new { id = "OpenAdminsUsersWindow", type = "button", @class = "cutomAdd" });
+                                                        tools.Excel().Text("Export to Excel");
+                                                    })
+                                                                          .Excel(excel => excel
+                                                            .FileName("admin Users.xlsx")
+                                            .Filterable(true)
+                                            .AllPages(true)
+                                            .ToString())
+                                            .Pageable(pageable => pageable
+
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(5))
+                                            .Sortable()
+                                            .Filterable()
+                                .Resizable(resizable => resizable.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(130))
+                                            .HtmlAttributes(new { style = "height:auto" })
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(5)
+                                                .Events(events => events.Error("error_handler"))
+                                                .Model(model => model.Id(p => p.Id))
+                                                                                                        .Read(read => read.Action("AdminUsersGrid_Read", "Ad_Page"))
+
+                                            )
+
+                                                                        )
+                                                                    </div>
+
+                                                                </div>
+                                                                            </text>);
+         tabstrip.Add().Text("Admin Privileges")
+                                  .Visible(((int[])ViewBag.Roles).Contains(13))
+
+                                                               .HtmlAttributes(new { id = "AdminPrivilegeTabStrip", @class = "selectTabStrip" })
+                                                                               .Content(@<text>
+
+                                                                <div class="row boxFixInKendo" id="CreateAdminPrivilageForm">
+                                                                      <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                                @Html.Label("Admin")
+                                                @Html.Partial("EditorTemplates/ComboBox", new ViewDataDictionary
+                                                   {
+                                                       TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "AdminId_General_FillFraudAssignAdminPrivilege_true" }
+                                                   })
+                                            </div>
+                                                                    <div class="col-sm-12 col-xs-12">
+
+                                                                        @(Html.Kendo().Grid<Ext_FraudingSystem.Models.Privilege>()
+                                                                    .Name("PrivilegeGrid")
+
+
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.Id).Hidden();
+                                                        columns.Template(t => { }).ClientTemplate("<input type='checkbox' class='chkbx' />").HeaderTemplate("<input type='checkbox' id='PrivilegesSelectAll' onclick='PrivilegesCheckAll(this)'/>").Width(30);
+
+                                                        columns.Bound(p => p.Name).Width(100).Title("privilege Name");
+
+                                                    })
+
+                                             .Sortable()
+
+                .Pageable(pageable => pageable
+
+                    .PreviousNext(false)
+                    .PageSizes(false)
+                    .Numeric(false))
+         .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+        .Scrollable()
+        .Selectable(selectable => selectable
+
+        .Mode(GridSelectionMode.Multiple)
+        )
+                          .Events(events => { events.Change("PrivilegeGrid_OnRowSelect"); events.DataBound("PrivilegeGrid_OnDataBound"); })
+                .HtmlAttributes(new { style = "height:auto", @class = "GridCheck" })
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .PageSize(int.MaxValue)
+        .Model(model => model.Id(p => p.Id))
+                                        .Read(read => read.Action("PrivilegeGrid_Read", "Ad_Page"))
+
+                                            )
+
+                                                                        )
+                                                                    </div>
+                                                                     <div class="col-sm-12 col-xs-12">
+                                                <div class="GeneralBtnFloat">
+                                                    @(Html.Kendo().Button()
+                                                                                    .Name("BtnSaveAdminPrivilege")
+                                                                                            .Events(e => e.Click("SaveAdminPrivilege"))
+                                                                                                    .HtmlAttributes(new { type = "button", @class = "save", style = "float: right;" })
+                                                                                            .Content("Save"))
+                                                </div>
+                                            </div>
+
+                                                                </div>
+                                                                            </text>);
+                                   tabstrip.Add().Text("Description")
+                                  .Visible(((int[])ViewBag.Roles).Contains(14))
+
+                                   .HtmlAttributes(new { id = "DescriptionTabStrip", @class = "selectTabStrip" })
+                                                                               .Content(@<text>
+                                    <div class="group-box">
+                                        <div class="row boxFixInKendo" style="padding: 0px;margin:10px">
+                                            <div id="DescriptionSection">
+                                                 <div class="row" style="margin-bottom:15px">
+                                                      <div class="col-sm-6 col-xs-12 ">
+                                                        @Html.DisplayName("Description AR ")
+                                                        @Html.TextArea("Description_box", new { style = "width:100%;height:70px" })
+                                                    </div>
+                                                     <div class="col-sm-6 col-xs-12 ">
+                                                        @Html.DisplayName("Description EN")
+                                                        @Html.TextArea("Description_box_EN", new { style = "width:100%;height:70px" })
+                                                    </div>
+                                                      <div class="col-sm-12 col-xs-12">
+                                                            <div class="GeneralBtnFloat" style="margin-top:10px">
+                                                                  @Html.Kendo().Button().Name("BtnSaveDescription").Content("Save").Events(e => e.Click("SaveDescription")).HtmlAttributes(new { @class = "save" ,style= "float: right" })
+                                                            </div>
+                                                      </div>
+
+                                                 </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+         </text>);
+                                   tabstrip.Add().Text("Configuration")
+                                  .Visible(((int[])ViewBag.Roles).Contains(15))
+
+                                         .HtmlAttributes(new { id = "FormConfigTabStrip" })
+                                         .Content(@<text>
+                                            @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FormConfiguration>()
+                                                                .Name("FormConfigGrid")
+                                                            .AutoBind(false)
+                                                            .Columns(columns =>
+                                            {
+                                                columns.Bound(p => p.Id).Hidden();
+                                                columns.Bound(p => p.SysPropName).Title("System Input Name").Width(100);
+                                                columns.Bound(p => p.IsHidden).Title("Is Hidden").Width(100);
+                                                columns.Bound(p => p.IsRequired).Title("Is Required").Width(100);
+                                                columns.Bound(p => p.PropName).Title("Input new name").Width(100);
+                                                columns.Command(command =>
+                                                {
+                                                    command.Edit().Text("Edit").UpdateText("Update").CancelText("Cancel");
+
+                                                }).Width(100);
+                                            })
+
+                                                            .Editable(editable =>
+                          {
+                              editable.Mode(GridEditMode.InLine);
+
+                              editable.DisplayDeleteConfirmation("Confirm Delete");
+                          })
+                                                       .Pageable(pageable => pageable
+
+                                                            .Refresh(true)
+                                                            .PageSizes(true)
+                                                             .ButtonCount(5))
+
+                                                    .Sortable()
+                                                    .Events(e => e.Edit("GridEdit"))
+                                                                    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                                                .Resizable(r => r.Columns(true))
+                                                .Scrollable(scrolling => scrolling.Height(250))
+                                                .HtmlAttributes(new { style = "height:auto" })
+                                                    .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .PageSize(5)
+
+                                                        .Model(model => model.Id(p => p.Id))
+                                                               .Read(read => read.Action("ReadFormConfiguration", "Ad_Page"))
+                                                               .Update(update => update.Action("UpdateFormConfiguration", "Ad_Page"))
+                                            )
+                                            )
+
+                                        </text>);
+
+                                   tabstrip.Add().Text("Reporting Policy")
+                                  .Visible(((int[])ViewBag.Roles).Contains(16))
+
+                                                               .HtmlAttributes(new { id = "ReportingPolicyTabStrip", @class = "selectTabStrip" })
+                                                                               .Content(@<text>
+
+                                                                <div class=" boxFixInKendo">
+                                                                  <div class="row">
+        <div class="col-sm-6 col-xs-12" style="margin-top:15px;">
+            @Html.Label("Attachment")
+            @Html.Kendo().Upload().Name("Attachements").Multiple(false).HtmlAttributes(new { style = "width:100%;height:30px" }).Messages(s => s.Select("select file"))
+            <p><strong>Note:</strong> Please Upload an Reporting Policy File.</p>
+        </div>
+
+        <div class="col-sm-5 col-xs-12 ">
+            <button style="margin-top:45px;" class="button" id="IconBtn" onclick="ViewAttachment()">View</button>
+        </div>
+    </div>
+
+
+
+    <div class="col-sm-12 col-xs-12">
+        <div class="GeneralBtnFloat" style="margin-right:30px">
+            @(Html.Kendo().Button().Name("BtnSaveAttachments").Events(e => e.Click("SaveAttachment")).HtmlAttributes(new { type = "button", @class = "save", style = "width:120px" }).Content("Save"))
+            @(Html.Kendo().Button().Name("BtnResetAttachments").Events(e => e.Click("ResetAttachment")).HtmlAttributes(new { type = "button", @class = "fa fa-repeat save", style = "width:120px;height: 30px;" }).Content("Reset"))
+        </div>
+    </div>
+                                                                </div>
+                                                                            </text>);
+
+                                   tabstrip.Add().Text("Logo")
+                                  .Visible(((int[])ViewBag.Roles).Contains(17))
+
+                                                               .HtmlAttributes(new { id = "LogoTabStrip", @class = "selectTabStrip" })
+                                                                               .Content(@<text>
+
+                                                           <div class="row">
+        <div class="col-sm-5 col-sm-offset-4 col-xs-12">
+            <div class="group-box">
+                @Html.Label("Change Logo", new { @class = "group-box-title" })
+                <div class="row boxFixInKendo">
+                    <div class="col-sm-12 col-xs-12 fileupload">
+                        <div class="text-center">
+                            <img src="@Url.Content(ViewBag.Logo == "" ? "~/Content/dist/img/vector/newicon/SaibBank.png" : ViewBag.Logo)" alt="User Image" id="LogoPhoto" class="img-blue" style="width: 300px; height: 100px; margin-bottom: 10px;">
+                            <input type="file" class="file" id="Logo" name="image" style="display:none" accept=".jpg,.png,.gif,.jpeg" />
+                            <div class="row">
+                                <div class="col-sm-12 col-xs-12">
+                                    250 px * 75 px
+                                </div>
+                                    <div class="col-sm-12 col-xs-12">
+                                        <button type="button" class="btn btn-danger deleteavatar" onclick="DeleteLogo()" style="width: 77.89px">
+                                            <i class=" fa fa-trash-o"></i>Delete
+                                        </button>
+                                        <button type="button" class="btn btn-default" onclick="ChooseLogo()" style="width: 77.89px">
+                                            <i class="fa fa-pencil"></i> Edit
+                                        </button>
+                                    </div>
+
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                                                                            </text>);
+
+                                  tabstrip.Add().Text("Assign Admin Role")
+                                  .Visible(((int[])ViewBag.Roles).Contains(18))
+
+                                                               .HtmlAttributes(new { id = "AssignAdminRoleTabStrip", @class = "selectTabStrip" })
+                                                                               .Content(@<text>
+
+                                                           <div class="row" id="DivAssignAdminRole">
+        <div class="col-sm-12 col-xs-12">
+            <div class="group-box">
+                @Html.Label("Assign Admin Role", new { @class = "group-box-title" })
+                <div class="row boxFixInKendo">
+                     <div class="col-sm-12 col-xs-12" style="margin-bottom:10px">
+                                                @Html.Label("Admin")
+                                                @Html.Partial("EditorTemplates/ComboBox", new ViewDataDictionary
+                                                   {
+                                                       TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "AssignAdminId_General_FillFraudAssignAdminPrivilege_true" }
+                                                   })
+                                            </div>
+
+                     <div class="col-sm-12 col-xs-12">
+        <div class="GeneralBtnFloat" style="margin-bottom:10px">
+            @(Html.Kendo().Button().Name("BtnAssign").Events(e => e.Click("AssignAdmin")).HtmlAttributes(new { type = "button", @class = "save", style = "width:120px" }).Content("Assign"))
+        </div>
+    </div>
+                       <div class="col-sm-12 col-xs-12">
+
+                                                                        @(Html.Kendo().Grid<Ext_FraudingSystem.Models.VM_adUsRead>()
+                                                                    .Name("AdminsGrid")
+                                                                    .AutoBind(true)
+                                                    .Columns(columns =>
+                                            {
+                                                columns.Bound(p => p.Id).Hidden();
+                                                columns.Bound(p => p.Name).Width(200).Title("Admin Name");
+                                                columns.Bound("").Title("").Width(200).ClientTemplate(
+
+                                            "# if (true) { # <button class='k-button Gbouttons k-button-icontext'  type='button' onclick='UnAssign(#:data.Id#)'>#}#"
+                                            + "# if (true) { #<i class='k-icon k-edit'></i>UnAssign#}#"
+                                            + "</a>"
+                                            ).Sortable(false);
+                                            })
+                                                    .ToolBar(tools =>
+                                            {
+                                                tools.Excel().Text("Export to Excel");
+                                            })
+                                                                          .Excel(excel => excel
+                                                            .FileName("admins.xlsx")
+                                            .Filterable(true)
+                                            .AllPages(true)
+                                            .ToString())
+                                            .Pageable(pageable => pageable
+
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(5))
+                                            .Sortable()
+                                            .Filterable()
+                                .Resizable(resizable => resizable.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(130))
+                                            .HtmlAttributes(new { style = "height:auto" })
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(5)
+                                                .Events(events => events.Error("error_handler"))
+                                                .Model(model => model.Id(p => p.Id))
+                                                                                                        .Read(read => read.Action("AdminsGrid_Read", "Ad_Page"))
+
+                                            )
+
+                                                                        )
+                                                                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                                                                            </text>);
+
+
+
+
+
+
+
+                              })
+
+
+        )    }
+    @(Html.Kendo().Window().Name("WindowPrintPR").Title("Print Case")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        <div class="row" style="margin:15px">
+                                            <div class="row" id="divPurchasingRequestPrint">
+                                                <div style="word-wrap: break-word;" class="group-box">
+                                                    @Html.Label("Case Details", new { @class = "group-box-title" })
+                                                    <h1 id="CaseTitle">Case Title</h1>
+                                                    <hr>
+                                                    <p id="CaseDetails">Case Content</p>
+                                                </div>
+                                                <h3 id="ReplyId"></h3>
+                                                <div id="AdminUsersReplyDivPrint">
+                                                </div>
+                                                <h3 id="AttachmentsId"></h3>
+                                                <div id="ImgDiv">
+                                                </div>
+                                            </div>
+                                            <div class="row" id="divGLPrintIcon">
+                                                <div class="GeneralBtnFloat">
+                                                    <img src="../../../Content/dist/img/Printer.png" onclick="PrintPurchaseRequest();" style="padding-left:15px;width:37px; margin-right: 29px; float:right" id="GLbtnPrint" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </text>)
+        )
+    @(Html.Kendo().Window().Name("CaseLogPrintWindow").Title("Print Case")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        <div style="margin:35px" role="dialog">
+
+
+                                            <div class="row boxFixInKendo" id="divCaseLogPrint">
+                                                <div class="row brdr-left">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <h4 class="headlineEmployeeCard"><span class="fa fa-file-text-o"></span> Case Details </h4>
+                                                    </div>
+                                                    <div class=" col-sm-12 col-xs-12" >
+                                                        <strong class="CaseLogLableC"> No</strong> : <label id="CaseNo1"></label>
+
+                                                    </div>
+                                                    <div class=" col-sm-12 col-xs-12" >
+                                                        <strong class="CaseLogLableC"> Title</strong> : <label id="CaseTitle1"></label>
+
+                                                    </div>
+                                                    <div class="col-sm-12 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Case</strong>:<label id="CaseCase1"></label>
+                                                    </div>
+                                                    <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">People Involved</strong>:<label id="CasePeopleInvolved1"></label>
+                                                    </div>
+                                                    <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Personal Information</strong>:<label id="CasePersonalInformation1"></label>
+                                                    </div>
+                                                    <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">When</strong>:<label id="CaseWhen1"></label>
+                                                    </div>
+                                                    <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Where</strong>:<label id="CaseWhere1"></label>
+                                                    </div>
+                                                    <div class="col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Classification</strong>: <label id="CaseClassification"></label>
+                                                    </div>
+
+                                                    <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Creation Date</strong>: <label id="CaseCreatedDate1"></label>
+                                                    </div>
+                                                    <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Status</strong>: <label id="CaseStatus1"></label>
+                                                    </div>
+                                                    <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Assign To</strong>: <label id="CaseAssignTo1"></label>
+                                                    </div>
+
+                                                <div id="CasePrintIsCustomeDiv" >
+                                                      <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Is Customer</strong>: <label id="CaseIsCustomer1"></label>
+                                                    </div>
+                                                     <div class=" col-sm-4 col-xs-12" >
+                                                        <strong class="CaseLogLableC">Customer Id /Bank Account</strong>: <label id="CaseCustomerId1"></label>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                <div class="row brdr-left">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <h4 class="headlineEmployeeCard"><span class="fa fa-history"></span> Case Logs </h4>
+                                                    </div>
+                                                    <div class="col-sm-12 col-xs-12" style="text-align: center;">
+                                                        <table class="table table-bordered table-hover" id="CaseLogDiv">
+                                                            <thead>
+                                                                <tr style="background: #d1d1d2;">
+                                                                    <th style="text-align: center;">No</th>
+                                                                    <th style="text-align: center;">Title</th>
+                                                                    <th style="text-align: center;">Case</th>
+                                                                    <th style="text-align: center;">Updated By</th>
+                                                                    <th style="text-align: center;">Updated Date</th>
+                                                                    <th style="text-align: center;">Status</th>
+                                                                    <th style="text-align: center;">Assign To</th>
+                                                                    <th style="text-align: center;">Classification</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="CaseLogTbl"></tbody>
+
+                                                        </table>
+                                                    </div>
+                                                    </div>
+
+                                                <div class="row ">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <h4 class="headlineEmployeeCard"><span class="fa fa-comments-o"></span> Replies </h4>
+                                                    </div>
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div id="AdminUsersReplyDivPrint1">
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+
+
+
+
+                                            </div>
+                                            <div class="row" id="divGLPrintIcon">
+                                                <div class="GeneralBtnFloat">
+                                                    <img src="../../../Content/dist/img/Printer.png" onclick="PrintCaseLogs();" style="padding-left:15px;width:37px; margin-right: 29px; float:right" id="GLbtnPrint" />
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </text>)
+        )
+    @(Html.Kendo().Window().Name("ChangeFraudDataWindow").Title("Whistleblowing Data")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Scrollable(false)
+                                    .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        <div class="row boxFixInKendo">
+                                            <div class="col-sm-4 col-xs-12">
+                                                @Html.Label("Status")
+                                                @Html.Partial("EditorTemplates/ComboBox", new ViewDataDictionary
+                                                   {
+                                                       TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "FraudStatusId_General_FillFraudStatus_true" }
+                                                   })
+                                            </div>
+                                            <div class="col-sm-4 col-xs-12">
+                                                @Html.Label("Assign To")
+                                                @Html.Partial("EditorTemplates/ComboBox", new ViewDataDictionary
+                                                   {
+                                                       TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "FraudEmployeesId_General_FillFraudEmployees_true" }
+                                                   })
+                                            </div>
+                                            <div class="col-sm-4 col-xs-12">
+                                                @Html.Label("Classification")
+                                                @Html.Partial("EditorTemplates/ComboBox", new ViewDataDictionary
+                                                   {
+                                                       TemplateInfo = new System.Web.Mvc.TemplateInfo { HtmlFieldPrefix = "LabelCasesId_General_FillLabelCases_true" }
+                                                   })
+                                            </div>
+
+                                            <div class="col-sm-12 col-xs-12 ">
+                                                        @Html.DisplayName("Note")
+                                                        @Html.TextArea("Note", new { style = "width:100%;height:30px" })
+                                                    </div>
+
+                                            <div class="col-sm-12 col-xs-12">
+                                                @(Html.Kendo().Button()
+                                                                                .Name("BtnSaveChangeFraudData")
+                                                                                .Events(e => e.Click("SaveChangeFraudData"))
+                                                                        .HtmlAttributes(new { type = "button", style = "margin-top:10px ;", @class = "show" })
+                                                                        .Content("Save")
+                                                )
+                                            </div>
+                                        </div>
+                                    </text>))
+    @(Html.Kendo().Window().Name("SystemLogsWindow").Title("System Log")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Scrollable(false)
+                                    .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+
+                                        <div class="group-box boxFixInKendo">
+                                            <div class="row boxFixInKendo" style="padding: 0px;margin:15px">
+                                                <div class="row boxFixInKendo" id="MonitoringDatesDiv" style="padding: 0px;margin-bottom:12px">
+                                                    <div class="col-sm-3 col-xs-12 ">
+                                                        @Html.Label("From")
+                                                        @(Html.Kendo().DatePicker().Name("MonitoringStartDate").HtmlAttributes(new { style = "width: 100%;height:30px" }).Events(e => e.Change("MonitoringStartChange")))
+                                                    </div>
+                                                    <div class="col-sm-3 col-xs-12 ">
+                                                        @Html.Label("To")
+                                                        @(Html.Kendo().DatePicker().Name("MonitoringEndDate").HtmlAttributes(new { style = "width: 100%;height:30px" }).Events(e => e.Change("MoitoringEndChange")))
+                                                    </div>
+
+                                                    <div class="col-sm-1 col-xs-12">
+                                                        @(Html.Kendo().Button()
+                        .Name("ShowMonitoringReportBtn")
+                                .Events(e => e.Click("ShowMonitoringReport"))
+                .HtmlAttributes(new { type = "button", style = "margin-top:24px ;", @class = "show" })
+                .Content("Show")
+                                                        )
+                                                    </div>
+
+
+                                                    @*<div class="col-sm-1 col-xs-12">
+                                                                                                                            @(Html.Kendo().Button()
+                                                                .Name("RemoveMonitoringLogBtn")
+                                                                                .Events(e => e.Click("RemoveMonitoringLog"))
+                                                                        .HtmlAttributes(new { type = "button", @class = "delete deful", style = "margin-top: 24px !important;" })
+                                                        .Content(@ERP_Plus.Model.LocalResource.Resource.General_Delete)
+                                                                                                                            )
+                                                                                                                        </div>*@
+
+                                                </div>
+                                                <div class="row boxFixInKendo" id="MonitoringReportDiv">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        <div class="input-group">
+                                                            @*  <span class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>*@
+                                                            <input type="text" class="form-control" id='FindMonitoringSearchText' placeholder="Search For..." onkeypress="FindMonitoringkeyPress(event)">
+                                                            <span class="dropdown input-group-btn drop-filter">
+                                                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                                                    <span class="caret"></span>
+                                                                </button>
+                                                            </span>
+                                                            <span class="input-group-btn">
+                                                                <button onclick="BindFindMonitoringGrid()" class="btn btn-default" type="button">
+                                                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        @(Html.Kendo().Grid<Ext_FraudingSystem.Models.MonitoringLog>()
+                                                    .Name("SystemMonitoringGrid")
+                                                    .AutoBind(false)
+                                                    .Columns(columns =>
+                                            {
+
+                                                columns.Bound(p => p.UserName).Title("User Name").Width(150);
+                                                columns.Bound(p => p.LogDate).Title("Log Date").Width(150).ClientTemplate("#= kendo.toString(kendo.parseDate(LogDate, 'dd/MM/yyyy'), 'dd/MM/yyyy') #");
+                                                columns.Bound(p => p.LogTime).Title("Log Time").Width(150).ClientTemplate("#= kendo.toString(kendo.parseDate(LogTime, 'hh:mm:ss'), 'hh:mm:ss') #");
+                                                columns.Bound(p => p.ControllerName).Title("Controller Name").Width(180);
+                                                columns.Bound(p => p.ActionName).Title("Action Name").Width(150);
+                                                columns.Bound(p => p.IPAddress).Title("IP Address").Width(150);
+                                                columns.Bound(p => p.BrowserName).Title("Browser Name").Width(150);
+                                                columns.Bound(p => p.MacAddress).Title("Mac Address").Width(150);
+
+                                            })
+                                                     .ToolBar(tools =>
+                                                     {
+                                                         tools.Excel().Text("Export to excel");
+
+                                                     })
+                                                                     .Filterable(ftb => { ftb.Mode(GridFilterMode.Row); })
+                                            .Excel(excel => excel
+                                              .FileName("System Monitoring log.xlsx")
+                                                .AllPages(true)
+                                                .Filterable(true)
+                                                .ToString()
+                                                )
+                                                         .Events(e =>
+                                                             {
+                                                                 e.ExcelExport("SystemMonitoringExcelExport");
+                                                             })
+                                                   .Pageable(pageable => pageable
+                                                        .Refresh(true)
+                                                        .PageSizes(true)
+                                                         .ButtonCount(5)
+                                                                )
+                                                        .HtmlAttributes(new { style = "height: auto !important;" })
+
+                                            .Sortable()
+                                            .Reorderable(reorderable => reorderable.Columns(true))
+                                                    .Resizable(resizable => resizable.Columns(true))
+                                                    .Sortable()
+                                                    .Scrollable(scrolling => scrolling.Height(280))
+                                                    .DataSource(dataSource => dataSource
+                                                        .Ajax()
+                                                        .PageSize(5)
+                                                        .Model(model => model.Id(p => p.Id))
+                                                                .Read(read => read.Action("SystemMonitoringGrid_Read", "Ad_Page").Data("SetSystemMonitorngDates"))
+
+                                            )
+                                                        )
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </text>))
+    @(Html.Kendo().Window().Name("CaseLogsWindow").Title("Case Log")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Scrollable(false)
+                                    .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        @Html.Hidden("CaseId", 0)
+                                        <div class="row boxFixInKendo" style="margin-top:10px;">
+                                            <div class="col-sm-12 col-xs-12">
+
+                                                @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FraudCases>()
+                                                            .Name("AdminCasesLog")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.CaseId).Title("No ").Width(120);
+
+                                                        columns.Bound(p => p.Title).Title("Title").Width(150);
+                                                        columns.Bound(p => p.Case).Width(200).Title("Case");
+                                                        columns.Bound(p => p.UpdateByName).Title("Updated By ").Width(150);
+                                                        columns.Bound(p => p.CreatedDate).Title("Creation Date").ClientTemplate("#=kendo.toString(kendo.parseDate(CreatedDate,'dd/MM/yyyy hh:mm:ss'),'dd/MM/yyyy hh:mm:ss') #").Width(250);
+                                                        columns.Bound(p => p.Status).Title("Status").Width(150);
+                                                        columns.Bound(p => p.UserName).Title("Assign To").Width(150);
+                                                        columns.Bound(p => p.LabelCase).Title("Classification ").Width(150);
+                                                        columns.Bound(p => p.Note).Title("Note ").Width(150);
+
+
+
+                                                    })
+                                        .ToolBar(tools =>
+                                        {
+                                            tools.Custom().Text("Display Columns").HtmlAttributes(new { id = "AdminCasesLogColumnMenu", type = "button" });
+                                            tools.Excel().Text("Export Excel");
+                                        })
+                                        .ColumnMenu()
+                                     .Excel(excel => excel
+                                  .FileName("Cases.xlsx")
+                                    .AllPages(true)
+                                    .Filterable(true)
+                                    .ToString()
+                                    )
+                                            .Pageable(pageable => pageable
+                                                        .Messages(p =>
+                                                        {
+                                                            p.ItemsPerPage("items per page");
+                                                            p.Empty("No Item To Display");
+                                                            p.Display("{0} - {1} " + "From" + " {2} " + "item" + "");
+                                                        })
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(10))
+                                            .Sortable()
+                                    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                                .Resizable(resizable => resizable.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(130))
+                                            .HtmlAttributes(new { style = "height:auto" })
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .ServerOperation(false)
+                                                .PageSize(10)
+                                                .Events(events => events.Error("error_handler"))
+                                                .Model(model => model.Id(p => p.Id))
+                                                                                                                .Read(read => read.Action("AdminCasesLog_Read", "Ad_Page").Data("SetCAseId"))
+                                            )
+
+                                                )
+                                            </div>
+                                        </div>
+
+
+                                    </text>))
+    @(Html.Kendo().Window().Name("CasesReplyWindow").Title("Case Replies")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Scrollable(false)
+                                    .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        <div class="row boxFixInKendo" style="margin-top:10px;">
+                                            <div class="col-sm-12 col-xs-12">
+                                                <div class="input-group">
+                                                    @*  <span class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></span>*@
+                                                    <input type="text" class="form-control" id='FindCAseReplySearchText' placeholder="Search For..." onkeypress="FindCasseReplykeyPress(event)">
+                                                    <span class="dropdown input-group-btn drop-filter">
+                                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                    </span>
+                                                    <span class="input-group-btn">
+                                                        <button onclick="BindCaseReplyGrid()" class="btn btn-default" type="button">
+                                                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-xs-12">
+
+                                                @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FraudCases>()
+                                                                    .Name("AdminCasesReply")
+                                                    .Columns(columns =>
+                                            {
+                                                columns.Bound(p => p.Id).Title("No").Width(120);
+                                                columns.Bound(p => p.Title).Title("Title").Width(200);
+                                                columns.Bound(p => p.Case).Width(200).Title("Case");
+                                                columns.Bound(p => p.PeopleInvolved).Title("People Involved").Hidden().Width(200);
+                                                columns.Bound(p => p.PersonalInformation).Width(150).Title("Personal Information").Hidden();
+                                                columns.Bound(p => p.When).Title("When").Hidden().Width(200);
+                                                columns.Bound(p => p.Where).Title("Where").Hidden().Width(200);
+                                                columns.Bound(p => p.Status).Title("Status").Width(200);
+                                                columns.Bound(p => p.UserName).Title("Assign To").Width(200).Hidden();
+                                                columns.Bound(p => p.LabelCase).Title("Classification ").Width(200).Hidden();
+                                                columns.Bound(p => p.IsCustomer).Title("Is Customer").ClientTemplate("# if (!data.IsCustomer ) {# No #}#" + " #if  (data.IsCustomer) {# yes #}#").Filterable(false).Hidden().Width(200);
+                                                columns.Bound(p => p.CustomerId).Title("Customer ID /Bank account ").Hidden().Width(200);
+
+                                                columns.Bound(p => p.CreatedDate).Title("Creation Date").ClientTemplate("#=kendo.toString(kendo.parseDate(CreatedDate,'dd/MM/yyyy hh:mm:ss'),'dd/MM/yyyy hh:mm:ss') #").Width(200).Hidden();
+                                                columns.Bound(p => p.ReplyBy).Title("Replied By").Width(200);
+                                                columns.Bound(p => p.Reply).Title("Reply").Width(200);
+
+
+                                            })
+                                        .ToolBar(tools =>
+                                        {
+                                            tools.Custom().Text("Display Columns").HtmlAttributes(new { id = "AdminCasesReplysColumnMenu", type = "button" });
+                                            tools.Excel().Text("Export Excel");
+                                        })
+                                        .ColumnMenu()
+                                     .Excel(excel => excel
+                                  .FileName("CaseReplys.xlsx")
+                                    .AllPages(true)
+                                    .Filterable(true)
+                                    .ToString()
+                                    )
+                                            .Pageable(pageable => pageable
+                                                        .Messages(p =>
+                                                               {
+                                                                   p.ItemsPerPage("items per page");
+                                                                   p.Empty("No Item To Display");
+                                                                   p.Display("{0} - {1} " + "From" + " {2} " + "item" + "");
+                                                               })
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(10))
+                                            .Sortable()
+                                    .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                                .Resizable(resizable => resizable.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(130))
+                                            .HtmlAttributes(new { style = "height:auto" })
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(10)
+                                                .Events(events => events.Error("error_handler"))
+                                                .Model(model => model.Id(p => p.Id))
+                                                                                                                                .Read(read => read.Action("AdminCasesReply_Read", "Ad_Page").Data("SetCaseReplyData"))
+                                            )
+
+                                                )
+                                            </div>
+                                        </div>
+
+
+                                    </text>))
+    @(Html.Kendo().Window().Name("AdminUsersWindow").Title("Admins Users")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                         .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        <div class="group-box">
+                                            <div class="row boxFixInKendo" style="padding: 0px;margin:10px" id="CreateAdminUserDiv">
+                                                <div class="col-sm-5 col-xs-12">
+                                                    @Html.Label("UserName") *
+
+                                                </div>
+                                                <div class="col-sm-7 col-xs-12">
+                                                    @Html.Kendo().TextBox().Name("AdminUserName").HtmlAttributes(new { style = "width:100%" })
+                                                </div>
+
+                                                 <div class="col-sm-5 col-xs-12">
+                                                    @Html.Label("Email") *
+
+                                                </div>
+                                                <div class="col-sm-7 col-xs-12">
+                                                    @Html.Kendo().TextBox().Name("AdminEmail").HtmlAttributes(new { style = "width:100%" })
+                                                </div>
+                                                <div class="col-sm-5 col-xs-12">
+                                                    @Html.Label("Password") *
+                                                </div>
+                                                <div class="col-sm-7 col-xs-12">
+                                                    @Html.Kendo().TextBox().Name("AdminPassword").HtmlAttributes(new { type = "password", style = "width:100%" })
+                                                </div>
+                                                <div class="col-sm-5 col-xs-12">
+                                                    @Html.Label("Confirm Password") *
+                                                </div>
+                                                <div class="col-sm-7 col-xs-12">
+                                                    @Html.Kendo().TextBox().Name("ConfirmAdminPassword").HtmlAttributes(new { type = "password", style = "width:100%" })
+                                                </div>
+                                                <div class="col-sm-12 col-xs-12">
+                                                    <div class="GeneralBtnFloat">
+                                                        @Html.Kendo().Button().Name("SystemAdminUsersSaveBtn").Content("Save").Events(e => e.Click("SaveAdminSystemUsers")).HtmlAttributes(new { @class = "save" })
+                                                        <img src="@Url.Content("~/Content/dist/img/loading.gif")" alt="Alternate Text" class="loader" />
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </text>)
+        )
+    @(Html.Kendo().Window().Name("ResetAdminUsersWindow").Title("Reset Admins Password")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                         .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        @Html.Hidden("AdminUserPrivId", 0)
+                                        <div class="group-box">
+                                            <div class="row boxFixInKendo" style="padding: 0px;margin:10px" id="ResetAdminUserDiv">
+
+                                                <div class="col-sm-5 col-xs-12">
+                                                    @Html.Label("Password") *
+                                                </div>
+                                                <div class="col-sm-7 col-xs-12">
+                                                    @Html.Kendo().TextBox().Name("ResetAdminPassword").HtmlAttributes(new { type = "password", style = "width:100%" })
+                                                </div>
+                                                <div class="col-sm-5 col-xs-12">
+                                                    @Html.Label("Confirm Password") *
+                                                </div>
+                                                <div class="col-sm-7 col-xs-12">
+                                                    @Html.Kendo().TextBox().Name("ResetConfirmAdminPassword").HtmlAttributes(new { type = "password", style = "width:100%" })
+                                                </div>
+                                                <div class="col-sm-12 col-xs-12">
+                                                    <div class="GeneralBtnFloat">
+                                                        @Html.Kendo().Button().Name("SystemAdminUsersResetBtn").Content("Reset").Events(e => e.Click("SystemAdminUsersReset")).HtmlAttributes(new { @class = "save" })
+                                                        <img src="@Url.Content("~/Content/dist/img/loading.gif")" alt="Alternate Text" class="loader" />
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </text>)
+        )
+    @(Html.Kendo().Window().Name("EditEmailAdminUsersWindow").Title("Edit Admins Email")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                         .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        @Html.Hidden("AdminUserEmailId", 0)
+                                        <div class="group-box">
+                                            <div class="row boxFixInKendo" style="padding: 0px;margin:10px" id="EditEmailAdminUserDiv">
+
+                                                <div class="col-sm-5 col-xs-12">
+                                                    @Html.Label("Email") *
+                                                </div>
+                                                <div class="col-sm-7 col-xs-12">
+                                                    @Html.Kendo().TextBox().Name("AdminEditEmail").HtmlAttributes(new {  style = "width:100%" })
+                                                </div>
+
+                                                <div class="col-sm-12 col-xs-12">
+                                                    <div class="GeneralBtnFloat">
+                                                        @Html.Kendo().Button().Name("SystemAdminUsersEditEmailBtn").Content("Edit Email Admin").Events(e => e.Click("EditEmailAdmin")).HtmlAttributes(new { @class = "save" })
+                                                        <img src="@Url.Content("~/Content/dist/img/loading.gif")" alt="Alternate Text" class="loader" />
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </text>)
+        )
+
+
+
+
+
+
+
+</div>
+
+    @*<div id="AppearDashboardPannel" style="display:none" >
+            @Html.Partial("Dashboard")
+        </div>*@
+    <div class="row">
+        <div id="AppearDashboardPannel">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-body">
+                        @Html.Partial("Dashboard")
+                        <!-- /.row -->
+                    </div><!-- ./box-body -->
+                </div><!-- /.box -->
+            </div><!-- /.col -->
+        </div>
+    </div>
+}
+else
+{
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div class="col-md-12" style="margin-top:40px;">
+                    <div class="box shortcut-box">
+                        <div class="box-header with-border text-center">
+                            <div style="align-content:center;">
+                                <img src="~/Content/dist/img/lock.png" />
+                                <br /><br />
+                                <span style="font-size:large;color:#3f51b5;margin-top:20px; ">
+                                    You don't Have a permission to view content
+                                    @* <br>Please goto <a href="@Url.Content("~/ManageSystemConfiguration/Index")" style="text-decoration: underline;">System Configuration</a> ==> Settings == > Allowed IPs*@
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+}
+
+
+<script>
+
+    HideAllPannels();
+    function FilterFraudStatusId() {
+        return {
+            Id: $("#FraudStatusId").data("kendoComboBox").value(),
+            text: $("#FraudStatusId").data("kendoComboBox").text(),
+        }
+    }
+    function FilterFraudEmployeesId() {
+        return {
+            Id: $("#FraudEmployeesId").data("kendoComboBox").value(),
+            text: $("#FraudEmployeesId").data("kendoComboBox").text(),
+        }
+    }
+    function FilterLabelCasesId() {
+        return {
+            Id: $("#LabelCasesId").data("kendoComboBox").value(),
+            text: $("#LabelCasesId").data("kendoComboBox").text(),
+        }
+    }
+    function FilterAdminId() {
+        return {
+            Id: $("#AdminId").data("kendoComboBox").value(),
+            text: $("#AdminId").data("kendoComboBox").text(),
+        }
+    }
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            Show_Message("error", message);
+        }
+    }
+    function AdminReply(Id) {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetCaseDataAndReplys")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                FraudId: Id
+            },
+            success: function (result) {
+                $('#FraudId').val(Id);
+                $("#AdminReplyCaseDiv").html(result.Case);
+                $("#AdminUsersReplyDiv").html("");
+                if (result.Replys.length > 0) {
+                    for (i = 0; i < result.Replys.length ; i++) {
+                        if (result.Replys[i].Name != "" && result.Replys[i].Case != "")
+                            $("#AdminUsersReplyDiv").append("<div class='group-box'> <label for='Test' class='group-box-title'>" + result.Replys[i].Name + "</label><div class='row boxFixInKendo'><div class='col-sm-9 col-xs-12'>" + result.Replys[i].Reply + "</div><div class='col-sm-3 col-xs-12'>" + new Date(parseInt(result.Replys[i].Date.substr(6))).toLocaleDateString() + " " + new Date(parseInt(result.Replys[i].Date.substr(6))).toLocaleTimeString() + "</div></div></div>");
+                    }
+                }
+                $("#AdminReplyWindow").parent().css('width', "70%");
+                $("#AdminReplyWindow").parent().css('height', "Auto");
+                $("#AdminReplyWindow").data("kendoWindow").center().open();
+
+            },
+            error: function (result) {
+            }
+        })
+    }
+    function ShowAdminAttachments(Id) {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetOldAttachements")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                FraudId: Id
+            },
+            success: function (result) {
+
+                if (result.Attachs.length > 0) {
+                    $('#FraudId').val(Id);
+                    $("#AdminCaseAttachmentsGrid").data("kendoGrid").dataSource.read()
+                    $("#AdminCaseAttachmentsWindow").parent().css('width', "70%");
+                    $("#AdminCaseAttachmentsWindow").parent().css('height', "Auto");
+                    $("#AdminCaseAttachmentsWindow").data("kendoWindow").center().open();
+                }
+                else {
+                    Show_Message("info", "No Attachments Found");
+                }
+            },
+            error: function (result) {
+            }
+        })
+    }
+    //function ShowAdminCases(Id) {
+
+    //}
+    function SetFraudId() {
+        return {
+            FraudId: $("#FraudId").val() == null ? 0 : $("#FraudId").val()
+        }
+    }
+    function GetAdminAttachments(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.open(dataItem.URL.replace('~', '..'));
+    }
+    function DeleteAdminAttachment(e) {
+        if (confirm("Are you sure you want to delete this item?")) {
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            $.ajax({
+                url: "@Url.Content("~/Ad_Page/AdminCaseAttachmentsGrid_Destroy")",
+                type: 'POST',
+                data: {
+                    Id: dataItem.Id
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", "Deleted Successfully");
+                        $("#AdminCaseAttachmentsGrid").data("kendoGrid").dataSource.read();
+
+                    }
+                    else {
+                        Show_Message("error", result.Message);
+                    }
+                },
+                error: function (result) {
+                }
+            })
+        }
+
+    }
+    function SaveAdminReply(e) {
+        e.preventDefault();
+        $("#AdminReplyTextArea").attr("data-val-required", "Field Required")
+
+        var validatable = $("#AdminReplyWindow").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            $("#BtnAdminReply").addClass("disabledButton");
+            var formdata = new FormData();
+            var Input = $("#ReplyAttachments").data("kendoUpload").wrapper.find("input[type='file']") // for Kendo file uploder
+            Input.each(function (j) {
+                for (i = 0; i < Input[j].files.length; i++) {
+                    formdata.append(Input[j].files[i].name, Input[j].files[i]);
+                }
+            })
+            formdata.append("FraudId", $("#FraudId").val());
+            formdata.append("Reply", $("#AdminReplyTextArea").val());
+
+            $.ajax({
+                url: "@Url.Content("~/Ad_Page/SaveAdminReply")",
+                type: 'POST',
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,   // tell jQuery not to set contentType
+
+                data: formdata,
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", "Saved Successfully");
+                        $('#AdminReplyWindow input,textarea').val('');
+                        $("#AdminCases").data("kendoGrid").dataSource.read();
+
+                        $("#AdminReplyWindow").data("kendoWindow").close();
+                        ResetKendoFileUpload();
+                    }
+                    else {
+                        Show_Message("error", result.Message);
+                    }
+                    $("#BtnAdminReply").removeClass("disabledButton");
+                },
+                error: function (result) {
+                    $("#BtnAdminReply").removeClass("disabledButton");
+                }
+
+            })
+        }
+    }
+    $("#AdminReplyWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#FraudId').val(0);
+
+        }
+    })
+    $("#AdminCaseAttachmentsWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#FraudId').val(0);
+        }
+    })
+    $("#ChangePasswordWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#ChangePasswordWindow input').val('');
+        }
+    })
+    function OpenChangePasswordWindow() {
+        $("#ChangePasswordWindow").parent().css('width', "70%");
+        $("#ChangePasswordWindow").parent().css('height', "Auto");
+        $("#ChangePasswordWindow").data("kendoWindow").center().open();
+    }
+    @*function SignOut() {
+        $.ajax({
+            url: "@Url.Content("/Account/SignOut")",
+            type: 'POST',
+
+        data: {
+
+        },
+        dataType: 'json',
+        success: function (result) {
+            window.location.href = "/Home/index";
+        },
+        error: function (result) {
+        }
+        })
+
+    }*@
+    function ChangePasswordSave(e) {
+        e.preventDefault();
+        $("#OldPassword").attr("data-val-required", "Field Required")
+        $("#NewPassword").attr("data-val-required", " Field Required")
+        $("#NewPassword").attr("data-val-regex-pattern", "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*[#$%^&+=@@]).{6,}$")
+        $("#NewPassword").attr("data-val-regex", "Must Contain At Least (One Upper Case ,One Number ,One Special case @@#$^&+= and Length >=6) ")
+        $("#ConfirmPassword").attr("data-val-required", "Field Required")
+        var validatable = $("#ChangePasswordDiv").kendoValidator({
+            rules: {
+                customRule1: function (input) {
+                    if (input.is("[name=ConfirmPassword]")) {
+
+                        return input.val() === $("#NewPassword").val();
+                    }
+                    return true;
+                },
+            },
+            messages: {
+                customRule1: "Password not match",
+            },
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            $.ajax({
+                url: "/Account/CustomChanePassword",
+                type: 'POST',
+                data: {
+                    OldPassword: $("#OldPassword").val(),
+                    NewPassword: $("#NewPassword").val(),
+                    ConfirmPassword: $("#ConfirmPassword").val(),
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", result.Message);
+                        $("#ChangePasswordWindow input").val("");
+                        $("#ChangePasswordWindow").data("kendoWindow").close();
+                    }
+                    else {
+                        Show_Message("error", result.Message);
+                    }
+                },
+                error: function (result) {
+                    Show_Message("error", "Sorry,An error occured");
+                }
+            })
+        }
+    }
+    function ShowAdminSettingsWindow() {
+        $("#AdminSettingsWindow").parent().css('width', "70%");
+        $("#AdminSettingsWindow").parent().css('height', "Auto");
+        $("#AdminSettingsWindow").data("kendoWindow").center().open();
+    }
+    function ShowSystemLogsWindow() {
+        $("#SystemLogsWindow .k-tooltip-validation").css("display", "none");
+        $("#MonitoringReportDiv").hide();
+        $("#MonitoringStartDate").data("kendoDatePicker").value(null);
+        $("#MonitoringEndDate").data("kendoDatePicker").value(null);
+        $("#SystemLogsWindow").parent().css('width', "70%");
+        $("#SystemLogsWindow").parent().css('height', "Auto");
+        $("#SystemLogsWindow").data("kendoWindow").center().open();
+    }
+    function ShowCaseLogsWindow() {
+        $("#AdminCasesLog").data("kendoGrid").dataSource.read();
+        $("#CaseLogsWindow").parent().css('width', "70%");
+        $("#CaseLogsWindow").parent().css('height', "Auto");
+        $("#CaseLogsWindow").data("kendoWindow").center().open();
+    }
+    function ShowCaseReplysWindow() {
+        $("#AdminCasesReply").data("kendoGrid").dataSource.read();
+        $("#CasesReplyWindow").parent().css('width', "70%");
+        $("#CasesReplyWindow").parent().css('height', "Auto");
+        $("#CasesReplyWindow").data("kendoWindow").center().open();
+    }
+
+    function sync_handler(e) {
+        this.read();
+        this.cancelChanges();
+    }
+    function OpenChangeFraudDataWindow(Id) {
+        $('#FraudId').val(Id);
+        dataItem = $("#AdminCases").data("kendoGrid").dataSource.get(Id);
+
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetFraudDataIds")",
+            type: 'POST',
+            data: {
+                FraudId: Id,
+            },
+            dataType: 'json',
+            success: function (result) {
+                
+                $("#LabelCasesId").data("kendoComboBox").dataSource.read();
+                $("#FraudEmployeesId").data("kendoComboBox").dataSource.read();
+                $("#FraudStatusId").data("kendoComboBox").dataSource.read();
+                $("#FraudStatusId").data("kendoComboBox").value(result.StatusId == 0 ? "" : result.StatusId);
+                $("#FraudEmployeesId").data("kendoComboBox").value(result.UserPrivId == 0 ? "" : result.UserPrivId);
+                $("#LabelCasesId").data("kendoComboBox").value(result.LabelCaseId == 0 ? "" : result.LabelCaseId);
+                $('#Note').val(dataItem.Note)
+
+                $("#ChangeFraudDataWindow").parent().css('width', "70%");
+                $("#ChangeFraudDataWindow").parent().css('height', "Auto");
+                $("#ChangeFraudDataWindow").data("kendoWindow").center().open();
+
+            },
+            error: function (result) {
+            }
+        })
+
+    }
+    $("#ChangeFraudDataWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#ChangeFraudDataWindow input').val('');
+            $('#FraudId').val(0);
+        }
+    })
+    function DataBoundEvent(e) {
+        e.preventDefault();
+    }
+    function ChangeEvent(e) {
+        e.preventDefault();
+    }
+    function BindFindMonitoringGrid() {
+        $("#SystemMonitoringGrid").data("kendoGrid").dataSource.page(1);
+    }
+    function SaveChangeFraudData(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/SaveChangeFraudData")",
+            type: 'POST',
+            data: {
+                FraudId: $('#FraudId').val(),
+                StatusId: $("#FraudStatusId").data("kendoComboBox").value(),
+                AssignedPrivId: $("#FraudEmployeesId").data("kendoComboBox").value(),
+                LabelCaseId: $("#LabelCasesId").data("kendoComboBox").value(),
+                Note: $('#Note').val(),
+
+
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.Result) {
+                    Show_Message("success", "Saved Successfully");
+                    $("#ChangeFraudDataWindow").data("kendoWindow").close();
+                    $("#AdminCases").data("kendoGrid").dataSource.read();
+
+                }
+                else {
+                    Show_Message("error", result.Message);
+                }
+            },
+            error: function (result) {
+            }
+        })
+    }
+    $("#AdminCasesColumnMenu").click(function (e) {
+        e.preventDefault();
+        var offset = $(this).offset();
+        $("#AdminCases .k-header-column-menu:first").click();
+        $(".k-filter-item,.k-sort-asc,.k-sort-desc").hide();
+        $(".k-column-menu").parent().css({
+            top: offset.top + $(this).outerHeight(),
+            left: offset.left
+        });
+        $(".k-columns-item").trigger("mouseover")
+    });
+    $("#AdminCasesLogColumnMenu").click(function (e) {
+        e.preventDefault();
+        var offset = $(this).offset();
+        $("#AdminCasesLog .k-header-column-menu:first").click();
+        $(".k-filter-item,.k-sort-asc,.k-sort-desc").hide();
+        $(".k-column-menu").parent().css({
+            top: offset.top + $(this).outerHeight(),
+            left: offset.left
+        });
+        $(".k-columns-item").trigger("mouseover")
+    });
+    $("#AdminCasesReplysColumnMenu").click(function (e) {
+        e.preventDefault();
+        var offset = $(this).offset();
+        $("#AdminCasesReply .k-header-column-menu:first").click();
+        $(".k-filter-item,.k-sort-asc,.k-sort-desc").hide();
+        $(".k-column-menu").parent().css({
+            top: offset.top + $(this).outerHeight(),
+            left: offset.left
+        });
+        $(".k-columns-item").trigger("mouseover")
+    });
+
+    $("#AllowBeCustomerTabStrip").click(function (e) {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetAllowBeCustomerStatus")",
+            type: "POST",
+            dataType: 'json',
+            data: {},
+            success: function (result) {
+                $("#AllowBeCustomer").prop("checked", result.AllowBeCustomer);
+                isFirstTime = true;
+            },
+            error: function (result) {
+            }
+        })
+    });
+    $.ajax({
+        url: "@Url.Content("~/Ad_Page/GetAllowBeCustomerStatus")",
+        type: "POST",
+        dataType: 'json',
+        data: {},
+        success: function (result) {
+            $("#AllowBeCustomer").prop("checked", result.AllowBeCustomer);
+            isFirstTime = true;
+        },
+        error: function (result) {
+        }
+    })
+    function SaveAllowBeCustomer() {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/SaveAllowBeCustomer")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                AllowBeCustomer: $('#AllowBeCustomer').is(":checked"),
+            }, success: function (result) {
+                Show_Message("success", "Saved Successfully");
+
+            },
+            error: function (result) {
+            }
+        })
+    }
+
+    function SaveDescription(e) {
+
+        e.preventDefault();
+
+        $("#BtnSaveDescription").addClass("disabledButton");
+        NProgress.start();
+        var formdata = new FormData();
+        formdata.append("Description_box", $('#Description_box').val());
+        formdata.append("DescriptionboxEN", $('#Description_box_EN').val());
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/SaveDescriptionSettings")",
+            type: 'POST',
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            data: formdata,
+            success: function (result) {
+                NProgress.done();
+                Show_Message("success", "Saved Successfully");
+                $("#BtnSaveDescription").removeClass("disabledButton");
+            },
+            error: function (result) {
+                NProgress.done();
+                Show_Message("error", "Saving Failed");
+                $("#BtnSaveDescription").removeClass("disabledButton");
+            }
+        });
+
+
+
+
+    }
+    function SaveEmailSettings(e) {
+        e.preventDefault();
+        var EmailsList = [];
+        if ($("#EmailTo").val() == "") {
+            return Show_Message("error", "Empty EmailTo");
+        }
+        var EmailValidator = new RegExp("^([0-9a-zA-Z]([\+\-_\.][0-9a-zA-Z]+)*)+@@(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]*\.)+[a-zA-Z0-9]{2,3})$");
+        if (!($("#EmailTo").val() == "")) {
+            EmailsList = $("#EmailTo").val().split(",");
+            for (var i = 0; i < EmailsList.length; i++) {
+                if (EmailsList[i].trim() != "" && !EmailValidator.exec(EmailsList[i].trim())) {
+                    return Show_Message("info", "Invalid Email" + ":" + EmailsList[i]);
+                }
+            }
+        }
+        if ($("#EmailTo").val() != null) {
+            EmailsList = $("#EmailTo").val().toString().split(",");
+            for (var i = 0; i < EmailsList.length; i++) {
+                if (EmailsList[i].trim() != "" && !EmailValidator.exec(EmailsList[i].trim())) {
+                    return Show_Message("info", "Invalid Email" + ":" + EmailsList[i]);
+                }
+            }
+        }
+        $("#Host").attr("data-val-required", "Field Required")
+        $("#Port").attr("data-val-required", "Field Required")
+        $("#EmailFrom").attr("data-val-required", "Field Required")
+        $("#EmailTo").attr("data-val-required", "Field Required")
+        $("#Username").attr("data-val-required", "Field Required")
+        $("#Password").attr("data-val-required", "Field Required")
+        $("#Subject").attr("data-val-required", "Field Required")
+        $("#Body").attr("data-val-required", "Field Required")
+        $("#AdminsEmail").attr("data-val-required", "Field Required")
+        $("#EmailFrom").attr("data-val-regex-pattern", "^([0-9a-zA-Z]([\+\-_\.][0-9a-zA-Z]+)*)+@@(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]*\.)+[a-zA-Z0-9]{2,3})$")
+        $("#EmailFrom").attr("data-val-regex", "Invalid Email")
+        //$("#EmailTo").attr("data-val-regex-pattern", "^([0-9a-zA-Z]([\+\-_\.][0-9a-zA-Z]+)*)+@@(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]*\.)+[a-zA-Z0-9]{2,3})$")
+        $("#EmailTo").attr("data-val-regex", "Invalid Email")
+        var validatable = $("#EmailConfigSection").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+
+        if (validatable.validate() === true && $("EmailTo").val() != "") {
+            $("#BtnSaveEmailSettings").addClass("disabledButton");
+            NProgress.start();
+
+            var formdata = new FormData();
+            formdata.append("Host", $('#Host').val());
+            formdata.append("EnableSsl", $('#EnableSsl').is(":checked"));
+
+            formdata.append("Port", $('#Port').data("kendoNumericTextBox").value());
+            formdata.append("UserName", $('#EmailUserName').val());
+            formdata.append("Password", $('#EmailPassword').val());
+            formdata.append("From", $('#EmailFrom').val());
+            formdata.append("To", $('#EmailTo').val());
+            formdata.append("Subject", $('#Subject').val());
+            formdata.append("Body", $('#Body').val())
+            formdata.append("AdminsEmailId", $("#AdminsEmail").data("kendoMultiSelect").value());
+
+            // formdata.append("Id", $('#EmailSettingsId').val());
+            $.ajax({
+                url: "@Url.Content("~/Ad_Page/SaveEmailSettings")",
+                type: 'POST',
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                data: formdata,
+                success: function (result) {
+                    if (result.Result) {
+
+                        NProgress.done();
+                      
+                        Show_Message("success", "Saved Successfully");
+                        $("#BtnSaveEmailSettings").removeClass("disabledButton");
+                    }
+                    else {
+
+                        NProgress.done();
+                        Show_Message("error",result.Message);
+                        $("#BtnSaveEmailSettings").removeClass("disabledButton");
+                    }
+                },
+                error: function (result) {
+                    NProgress.done();
+                    Show_Message("error", "Saving Failed");
+                }
+            });
+        }
+    }
+    $("#EmailSettingTapStrip").click(function (e) {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetEmailSetting")",
+            type: "POST",
+            dataType: 'json',
+            data: {},
+            success: function (result) {
+                $('#Host').val(result.Host);
+                $('#Port').data("kendoNumericTextBox").value(result.Port)
+                $('#EmailUserName').val(result.UserName);
+                $('#EmailPassword').val(result.Password);
+                $('#EmailFrom').val(result.From);
+                $('#EmailTo').val(result.To);
+                $('#Subject').val(result.Subject);
+                $('#Body').val(result.Body);
+                $("#EnableSsl").prop("checked", (result.EnableSsl ?? false));
+
+                if (result.AdminsEmailId != null && result.AdminsEmailId != "") {
+
+                    var AdminsEmailIds = result.AdminsEmailId.split(',');
+                    $("#AdminsEmail").data("kendoMultiSelect").value(AdminsEmailIds);
+                }
+
+            },
+            error: function (result) {
+            }
+        })
+    });
+    $("#DescriptionTabStrip").click(function (e) {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetDescriptionSetting")",
+            type: "POST",
+            dataType: 'json',
+            data: {},
+            success: function (result) {
+                $('#Description_box').val(result.Description_box);
+                $('#Description_box_EN').val(result.DescriptionboxEN);
+
+            },
+            error: function (result) {
+            }
+        })
+    });
+    function PrintCase(Id) {
+        dataItem = $("#AdminCases").data("kendoGrid").dataSource.get(Id);
+        $("#ImgDiv").html("");
+        $("#CaseTitle").html(dataItem.Title);
+        $("#CaseDetails").html(dataItem.Case);
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetCaseDataAndReplys")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                FraudId: Id
+            },
+            success: function (result) {
+                // $("#AdminReplyCaseDivPrint").html(result.Case);
+                $("#AdminUsersReplyDivPrint").html("");
+                if (result.Replys.length > 0) {
+                    $("#ReplyId").html("Replies");
+                    for (i = 0; i < result.Replys.length ; i++) {
+                        if (result.Replys[i].Name != "" && result.Replys[i].Case != "")
+                            $("#AdminUsersReplyDivPrint").append("<div class='group-box'> <label for='Test' class='group-box-title'>" + result.Replys[i].Name + "</label><div class='row boxFixInKendo'><div class='col-sm-9 col-xs-12'>" + result.Replys[i].Reply + "</div><div class='col-sm-3 col-xs-12'>" + new Date(parseInt(result.Replys[i].Date.substr(6))).toLocaleDateString() + " " + new Date(parseInt(result.Replys[i].Date.substr(6))).toLocaleTimeString() + "</div></div></div>");
+                    }
+                }
+            },
+            error: function (result) {
+            }
+        })
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/AdminCaseAttachments_Read")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                FraudId: Id
+            },
+            success: function (result) {
+
+                for (var i = 0; i < result.length; i++) {
+                    var Ext = result[i].URL.split(".").pop();
+                    if (Ext == "jpg" || Ext == "PNG" || Ext == "JPG" || Ext == "png") {
+                        $("#AttachmentsId").html("Attachments");
+
+                        break;
+                    }
+
+
+                }
+
+
+                for (i = 0; i < result.length ; i++) {
+                    var Ext = result[i].URL.split(".").pop();
+                    if (Ext == "jpg" || Ext == "PNG" || Ext == "JPG" || Ext == "png") {
+                        var x = result[i].URL.replace("~", "..");
+                        $("#ImgDiv").append("<div><img src=" + x + "  style='width:70%;height:300px;margin-bottom:5px' alt='Image'></div>")
+                    }
+                }
+            },
+            error: function (result) {
+            }
+        })
+        $("#WindowPrintPR").parent().css('width', "80%");
+        $("#WindowPrintPR").parent().css('height', "Auto");
+        $("#WindowPrintPR").data("kendoWindow").center().open();
+    }
+    function PrintPurchaseRequest() {
+        var contents = $("#divPurchasingRequestPrint").html();
+        var frame1 = $('<iframe />');
+        frame1[0].name = "frame1";
+        frame1.css({ "position": "absolute", "top": "-1000000px" });
+        $("body").append(frame1);
+        var frameDoc = frame1[0].contentWindow ? frame1[0].contentWindow : frame1[0].contentDocument.document ? frame1[0].contentDocument.document : frame1[0].contentDocument;
+        frameDoc.document.open();
+        frameDoc.document.write('<html><head>');
+        //Append the external CSS file.
+
+        frameDoc.document.write('</head><body>');
+
+
+        frameDoc.document.write('<style>.group-box{border: 2px solid #FFF; position: relative; border-radius: 5px;-webkit-box-shadow: inset 0.5px 0px 3px rgba(0, 0, 0, 0.50); margin-top: 10px; padding:30px ;}.group-box-title{top: -20px; margin: 10px 0; position: absolute; background-color: #ffffff; padding: 2px;}#CaseDetails{word-wrap: break-word;}.col-sm-9 { width: 75%;}.boxFixInKendo *, .boxFixInKendo *::before, .boxFixInKendo *::after{ box-sizing: content-box; }.col-sm-9{width: 75%;    float: left;}.col-sm-3 { width: 25%;float: left; }.CaseLogLableC{color:#b73232; }@@media print {body {-webkit-print-color-adjust: exact;}}</style>');
+
+        frameDoc.document.write('<link href="../../../Content/Site_en.css" rel="stylesheet" />');
+        frameDoc.document.write('<link href="../../../Content/Site_en.css" rel="stylesheet" />');
+        frameDoc.document.write(contents);
+
+        frameDoc.document.write('</body></html>');
+        frameDoc.document.close();
+        setTimeout(function () {
+            window.frames["frame1"].focus();
+            window.frames["frame1"].print();
+            frame1.remove();
+        }, 500);
+
+    }
+
+    function HideAllPannels() {
+        $("#AppearMainGridPannel").hide();
+        $("#AppearDashboardPannel").hide();
+    }
+    function ShowMainGridPannel() {
+        HideAllPannels();
+        $("#AppearMainGridPannel").show();
+        document.getElementById("BtnDashboard").style.backgroundColor = "#ccc";
+        document.getElementById("BtnMainGrid").style.backgroundColor = "#FAFAFA";
+    }
+    function ShowDashBoardPannel() {
+        HideAllPannels();
+        BubleChartRead();
+        BubleStatusRead();
+        $("#CaseStatusClassification").data("kendoChart").dataSource.read();
+        $("#LblCasesClassification").data("kendoChart").dataSource.read();
+        $("#AppearDashboardPannel").show();
+        document.getElementById("BtnDashboard").style.backgroundColor = "#FAFAFA";
+        document.getElementById("BtnMainGrid").style.backgroundColor = "#ccc";
+    }
+
+    $(document).ready(function () {
+        document.getElementById("BtnDashboard").style.backgroundColor = "#FAFAFA";
+        $("#AppearDashboardPannel").show();
+        $("#CaseStatusClassification").data("kendoChart").dataSource.read();
+        $("#LblCasesClassification").data("kendoChart").dataSource.read();
+        BubleChartRead();
+        BubleStatusRead();
+        ReadAttachments();
+
+        $('#PrivilegeGrid').on('click', '.chkbx', function () {
+            var checked = $(this).is(':checked');
+            var grid = $('#PrivilegeGrid').data().kendoGrid;
+            var dataItem = grid.dataItem($(this).closest('tr'));
+            if (checked) {
+                if (SelectedPrivilegeList.indexOf(dataItem.Id) == -1) {
+                    SelectedPrivilegeList[SelectedPrivilegeList.length] = dataItem.Id;
+                }
+            }
+            else {
+                SelectedPrivilegeList.splice(SelectedPrivilegeList.indexOf(dataItem.Id), 1);
+                $("#PrivilegesSelectAll").prop("checked", false)
+            }
+        });
+
+    });
+
+
+    $("#ExportStatusChartToPDF").click(function () {
+        var Chart = $("#CaseStatusClassification").getKendoChart();
+        Chart.exportPDF({ paperSize: "auto", margin: { left: "1cm", top: "1cm", right: "1cm", bottom: "1cm" } }).done(function (data) {
+            kendo.saveAs({
+                dataURI: data,
+                fileName: "Status Chart.pdf",
+                proxyURL: "//demos.telerik.com/kendo-ui/service/export"
+            });
+        });
+    });
+
+    $("#ExportClassificationChartToPDF").click(function () {
+        var Chart = $("#LblCasesClassification").getKendoChart();
+        Chart.exportPDF({ paperSize: "auto", margin: { left: "1cm", top: "1cm", right: "1cm", bottom: "1cm" } }).done(function (data) {
+            kendo.saveAs({
+                dataURI: data,
+                fileName: "Classification Chart.pdf",
+                proxyURL: "//demos.telerik.com/kendo-ui/service/export"
+            });
+        });
+    });
+
+    $("#ExportStatusChartToImg").click(function () {
+        var Chart = $("#CaseStatusClassification").getKendoChart();
+        Chart.exportImage().done(function (data) {
+            kendo.saveAs({
+                dataURI: data,
+                fileName: "Status Chart.png",
+                proxyURL: "//demos.telerik.com/kendo-ui/service/export"
+            });
+        });
+    });
+
+    $("#ExportClassificationChartToImg").click(function () {
+        var Chart = $("#LblCasesClassification").getKendoChart();
+        Chart.exportImage().done(function (data) {
+            kendo.saveAs({
+                dataURI: data,
+                fileName: "Classification Chart.png",
+                proxyURL: "//demos.telerik.com/kendo-ui/service/export"
+            });
+        });
+    });
+    function SetSystemMonitorngDates() {
+        return {
+            Text: $("#FindMonitoringSearchText").val(),
+            StartDate: $("#MonitoringStartDate").data("kendoDatePicker").value() == null ? "" : $("#MonitoringStartDate").data("kendoDatePicker").value().toDateString(),
+            EndDate: $("#MonitoringEndDate").data("kendoDatePicker").value() == null ? "" : $("#MonitoringEndDate").data("kendoDatePicker").value().toDateString(),
+        }
+    }
+    function SetCaseReplyData() {
+
+        return {
+            Text: $("#FindCAseReplySearchText").val(),
+        }
+    }
+    function ShowMonitoringReport() {
+        $("#MonitoringStartDate").attr("data-val-required", "Field Required")
+        $("#MonitoringEndDate").attr("data-val-required", "Field Required")
+        var validatable = $("#MonitoringDatesDiv").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            $("#MonitoringReportDiv").show();
+            $("#SystemMonitoringGrid").data("kendoGrid").dataSource.read();
+        }
+    }
+    $("#MonitoringReportColumnMenu").click(function (e) {
+        e.preventDefault();
+        var offset = $(this).offset();
+        $("#SystemMonitoringGrid .k-header-column-menu:first").click();
+        $(".k-filter-item,.k-sort-asc,.k-sort-desc").hide();
+        $(".k-column-menu").parent().css({
+            top: offset.top + $(this).outerHeight(),
+            left: offset.left
+        });
+        $(".k-columns-item").trigger("mouseover")
+    });
+
+    function FindMonitoringkeyPress(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            BindFindMonitoringGrid();
+        }
+    }
+    function FindCasseReplykeyPress(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            BindCaseReplyGrid();
+        }
+    }
+
+    function BindCaseReplyGrid() {
+        $("#AdminCasesReply").data("kendoGrid").dataSource.page(1);
+    }
+    function SystemMonitoringExcelExport(e) {
+
+        var sheet = e.workbook.sheets[0];
+        for (var rowIndex = 1; rowIndex < sheet.rows.length - 1; rowIndex++) {
+            var row = sheet.rows[rowIndex];
+            row.cells[5].format = "hh:mm:ss"
+        }
+    }
+    function MoitoringEndChange(e) {
+        var StartPicker = $("#MonitoringStartDate").data("kendoDatePicker"),
+            EndDate = this.value();;
+        if (EndDate) {
+            EndDate = new Date(EndDate);
+            EndDate.setDate(EndDate.getDate());
+            StartPicker.max(EndDate);
+        }
+    }
+    function MonitoringStartChange() {
+        var EndPicker = $("#MonitoringEndDate").data("kendoDatePicker"),
+            StartDate = this.value();
+        if (StartDate) {
+            StartDate = new Date(StartDate);
+            StartDate.setDate(StartDate.getDate());
+            EndPicker.min(StartDate);
+        }
+    }
+    function SaveAdminSystemUsers(e) {
+        e.preventDefault();
+        $("#AdminUserName").attr("data-val-required", "Field Required")
+        $("#AdminEmail").attr("data-val-required", "Field Required")
+        $("#AdminPassword").attr("data-val-required", "Field Required")
+        $("#AdminEmail").attr("data-val-regex-pattern", "^([0-9a-zA-Z]([\+\-_\.][0-9a-zA-Z]+)*)+@@(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]*\.)+[a-zA-Z0-9]{2,3})$")
+        $("#AdminEmail").attr("data-val-regex", "Invalid Email ")
+        $("#AdminPassword").attr("data-val-regex-pattern", "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*[#$%^&+=@@]).{6,}$")
+        $("#AdminPassword").attr("data-val-regex", "Must Contain At Least (One Upper Case ,One Number ,One Special case @@#$^&+= and Length >=6) ")
+        $("#ConfirmAdminPassword").attr("data-val-required", "Field Required")
+        var validatable = $("#CreateAdminUserDiv").kendoValidator({
+            rules: {
+                customRule1: function (input) {
+                    if (input.is("[name=ConfirmAdminPassword]")) {
+
+                        return input.val() === $("#AdminPassword").val();
+                    }
+                    return true;
+                },
+                customRule2: function (input) {
+                    if (input.is("[name=AdminUserName]")) {
+
+                        return input.val().indexOf(' ') == -1;
+                    }
+                    return true;
+                },
+            },
+            messages: {
+                customRule1: "Password not match",
+                customRule2: "Sorry, Please clear spaces",
+            },
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            NProgress.start();
+            $("#SystemAdminUsersSaveBtn").addClass("disabledButton");
+            $.ajax({
+                url: "/Account/CreateAdminUser",
+                type: 'POST',
+                data: {
+                    UserName: $("#AdminUserName").val(),
+                    Password: $("#AdminPassword").val(),
+                    Email: $("#AdminEmail").val(),
+
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", result.Message);
+                        $("#CreateAdminUserDiv input").val("");
+                        $("#AdminUsersWindow").data("kendoWindow").close();
+                        $("#AdminUsersGrid").data("kendoGrid").dataSource.read();
+                    }
+                    else {
+                        Show_Message("error", result.Message);
+                    }
+                    NProgress.done();
+                    $("#SystemAdminUsersSaveBtn").removeClass("disabledButton");
+                },
+                error: function (result) {
+                    Show_Message("error", "Sorry,An error occured");
+                }
+            })
+        }
+    }
+    function SystemAdminUsersReset(e) {
+        e.preventDefault();
+        $("#ResetAdminPassword").attr("data-val-required", "Field Required")
+        $("#ResetAdminPassword").attr("data-val-regex-pattern", "^.{6,}$")
+        $("#ResetAdminPassword").attr("data-val-regex", "Must Contain At Least 6 Charcters ")
+        $("#ResetConfirmAdminPassword").attr("data-val-required", "Field Required")
+        var validatable = $("#ResetAdminUserDiv").kendoValidator({
+            rules: {
+                customRule1: function (input) {
+                    if (input.is("[name=ResetConfirmAdminPassword]")) {
+
+                        return input.val() === $("#ResetAdminPassword").val();
+                    }
+                    return true;
+                },
+
+            },
+            messages: {
+                customRule1: "Password not match",
+
+            },
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            NProgress.start();
+            $("#SystemAdminUsersResetBtn").addClass("disabledButton");
+            $.ajax({
+                url: "/Account/ResetAdminUser",
+                type: 'POST',
+                data: {
+                    Id: $("#AdminUserPrivId").val(),
+                    Password: $("#ResetAdminPassword").val(),
+
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", result.Message);
+                        $("#ResetAdminUserDiv input").val("");
+                        $("#ResetAdminUsersWindow").data("kendoWindow").close();
+                        $("#AdminUsersGrid").data("kendoGrid").dataSource.read();
+                    }
+                    else {
+                        Show_Message("error", result.Message);
+                    }
+                    NProgress.done();
+                    $("#SystemAdminUsersResetBtn").removeClass("disabledButton");
+                },
+                error: function (result) {
+                    Show_Message("error", "Sorry,An error occured");
+                }
+            })
+        }
+    }
+
+    function EditEmailAdmin(e) {
+        e.preventDefault();
+        $("#AdminEditEmail").attr("data-val-required", "Field Required")
+
+        $("#AdminEditEmail").attr("data-val-regex-pattern", "^([0-9a-zA-Z]([\+\-_\.][0-9a-zA-Z]+)*)+@@(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]*\.)+[a-zA-Z0-9]{2,3})$")
+        $("#AdminEditEmail").attr("data-val-regex", "Invalid Email ")
+        var validatable = $("#EditEmailAdminUserDiv").kendoValidator({
+          
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            NProgress.start();
+            $("#SystemAdminUsersEditEmailBtn").addClass("disabledButton");
+            $.ajax({
+                url: "/Account/EditEmailUser",
+                type: 'POST',
+                data: {
+                    Id: $("#AdminUserEmailId").val(),
+                    Email: $("#AdminEditEmail").val(),
+
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", result.Message);
+                        $("#EditEmailAdminUserDiv input").val("");
+                        $("#EditEmailAdminUsersWindow").data("kendoWindow").close();
+                        $("#AdminUsersGrid").data("kendoGrid").dataSource.read();
+                    }
+                    else {
+                        Show_Message("error", result.Message);
+                    }
+                    NProgress.done();
+                    $("#SystemAdminUsersEditEmailBtn").removeClass("disabledButton");
+                },
+                error: function (result) {
+                    Show_Message("error", "Sorry,An error occured");
+                }
+            })
+        }
+    }
+
+    $("#EditEmailAdminUsersWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#AdminUserEmailId').val(0);
+            $('#EditEmailAdminUsersWindow input,textarea').val('');
+            $("#EditEmailAdminUsersWindow .k-tooltip-validation").css("display", "none")
+
+        }
+    })
+    $("#ResetAdminUsersWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#AdminUserPrivId').val(0);
+            $('#ResetAdminUsersWindow input,textarea').val('');
+            $("#ResetAdminUsersWindow .k-tooltip-validation").css("display", "none")
+
+        }
+    })
+    $("#OpenAdminsUsersWindow").click(function (e) {
+        e.preventDefault();
+        $("#AdminUsersWindow").parent().css('width', "65%");
+        $("#AdminUsersWindow").parent().css('height', "Auto");
+        $("#AdminUsersWindow").data("kendoWindow").center().open();
+    });
+    function Reset(Id) {
+        $("#AdminUserPrivId").val(Id);
+        $("#ResetAdminUsersWindow").parent().css('width', "65%");
+        $("#ResetAdminUsersWindow").parent().css('height', "Auto");
+        $("#ResetAdminUsersWindow").data("kendoWindow").center().open();
+    }
+
+    function EditEmail(Id,Email) {
+        $("#AdminUserEmailId").val(Id);
+        $("#AdminEditEmail").val(Email);
+        $("#EditEmailAdminUsersWindow").parent().css('width', "65%");
+        $("#EditEmailAdminUsersWindow").parent().css('height', "Auto");
+        $("#EditEmailAdminUsersWindow").data("kendoWindow").center().open();
+    }
+    function ShowCaseLogWindow(Id) {
+        $("#CaseId").val(Id);
+        $("#AdminCasesLog").data("kendoGrid").dataSource.read();
+        $("#CaseLogsWindow").parent().css('width', "70%");
+        $("#CaseLogsWindow").parent().css('height', "Auto");
+        $("#CaseLogsWindow").data("kendoWindow").center().open();
+    }
+    function SetCAseId() {
+        return {
+            Id: $("#CaseId").val(),
+        }
+    }
+    $("#CaseLogsWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#CaseId').val(0);
+
+        }
+    })
+    function ShowCustomerCard(Id) {
+        dataItem = $("#AdminCases").data("kendoGrid").dataSource.get(Id);
+        $("#ImgDiv1").html("");
+        $("#CaseNo1").html(dataItem.Id);
+        $("#CaseTitle1").html(dataItem.Title);
+        $("#CaseCase1").html(dataItem.Case);
+        $("#CasePeopleInvolved1").html(dataItem.PeopleInvolved);
+        $("#CasePersonalInformation1").html(dataItem.PersonalInformation);
+        $("#CaseWhen1").html(dataItem.When);
+        $("#CaseWhere1").html(dataItem.Where);
+        $("#CaseStatus1").html(dataItem.Status);
+        $("#CaseAssignTo1").html(dataItem.UserName);
+        $("#CaseClassification").html(dataItem.LabelCase);
+        $("#CaseCustomerId1").html(dataItem.CustomerId);
+        $("#CaseIsCustomer1").html(dataItem.IsCustomerName);
+        //if (dataItem.IsCustomer) {
+        //    $("#CasePrintIsCustomeDiv").show();
+        //}
+        //else {
+        //    $("#CasePrintIsCustomeDiv").hide();
+        //}
+        $("#CaseCreatedDate1").html(kendo.toString(kendo.parseDate(dataItem.CreatedDate), "dd/MM/yyyy"));
+        $("#CaseLogTbl").html("");
+        $("#CaseLogDiv").hide();
+
+        $("#AdminUsersReplyDivPrint1").html("");
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/AdminCasesLog_Read")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                Id: Id
+            },
+            success: function (result) {
+                console.log(result.Data[0].Case)
+                for (i = 0; i < result.Data.length ; i++) {
+                    $("#CaseLogDiv").show();
+                    $("#CaseLogTbl").append("<tr>"
+                            + "<td>" + result.Data[i].CaseId + "</td>"
+                            + "<td>" + result.Data[i].Title + "</td>"
+                            + "<td>" + result.Data[i].Case + "</td>"
+                            + "<td>" + result.Data[i].UpdateByName + "</td>"
+                            + "<td>" + new Date(parseInt(result.Data[i].CreatedDate.substr(6))).toLocaleDateString() + "</td>"
+                            + "<td>" + result.Data[i].Status + "</td>"
+                            + "<td>" + result.Data[i].UserName + "</td>"
+                            + "<td>" + result.Data[i].LabelCase + "</td>"
+                            + "</tr>");
+                }
+                $("#Card_IndustrialRegistryNumberEndDate").html(result.Data.IndustrialRegistryNumberEndDate == null ? "" : new Date(parseInt(result.Data.IndustrialRegistryNumberEndDate.substr(6))).toLocaleDateString());
+
+            },
+            error: function (result) {
+            }
+        })
+        //attach
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetCaseDataAndReplys")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                FraudId: Id
+            },
+            success: function (result) {
+                if (result.Replys.length > 0) {
+                    for (i = 0; i < result.Replys.length ; i++) {
+                        if (result.Replys[i].Name != "" && result.Replys[i].Case != "")
+                            $("#AdminUsersReplyDivPrint1").append("<div class='group-box'> <label for='Test' class='group-box-title'>" + result.Replys[i].Name + "</label><div class='row boxFixInKendo'><div class='col-sm-9 col-xs-12'>" + result.Replys[i].Reply + "</div><div class='col-sm-3 col-xs-12'>" + new Date(parseInt(result.Replys[i].Date.substr(6))).toLocaleDateString() + " " + new Date(parseInt(result.Replys[i].Date.substr(6))).toLocaleTimeString() + "</div></div></div>");
+                    }
+                }
+            },
+            error: function (result) {
+            }
+        })
+        $("#CaseLogPrintWindow").parent().css('width', "80%");
+        $("#CaseLogPrintWindow").parent().css('height', "Auto");
+        $("#CaseLogPrintWindow").data("kendoWindow").center().open();
+    }
+
+
+
+
+    function PrintCaseLogs() {
+        var contents = $("#divCaseLogPrint").html();
+        var frame1 = $('<iframe />');
+        frame1[0].name = "frame1";
+        frame1.css({ "position": "absolute", "top": "-1000000px" });
+        $("body").append(frame1);
+        var frameDoc = frame1[0].contentWindow ? frame1[0].contentWindow : frame1[0].contentDocument.document ? frame1[0].contentDocument.document : frame1[0].contentDocument;
+        frameDoc.document.open();
+        frameDoc.document.write('<html><head>');
+        frameDoc.document.write('</head><body>');
+        frameDoc.document.write('<style>.group-box{border: 2px solid #FFF; position: relative; border-radius: 5px;-webkit-box-shadow: inset 0.5px 0px 3px rgba(0, 0, 0, 0.50); margin-top: 10px; padding:30px ;}.group-box-title{top: -20px; margin: 10px 0; position: absolute; background-color: #ffffff; padding: 2px;}.fa{color:black !important;}.printData{position:fixed; left:0px;right:0px;bottom:0px;display:block}.text-center{text-align:center}.HeaderTemplate {height: 120px !important; margin-bottom: 15px;border-bottom-color: gray; margin-top: 20px;width: 100%;}.table-bordered {border: 1px solid #9E9E9E;}.table-bordered thead th,.table-bordered tbody td { font-size: 16px; text-align: -webkit-auto;border: 1px solid #9E9E9E;;} .table-bordered tbody td { font-size: 16px; color:black; font-weight: 600;}.emp-info-NetSalary {color:black!important;}td{font-size: 15px;color:black;font-weight: 700;}@@media print{@@page{size:12.3in 15.7in}}.emp-info-model .col-sm-6{padding-right:0;padding-bottom:5px}.brdr-left{border-bottom:1px solid #e5e5e5;padding-bottom: 20px !important;}.bg-teal{color:#fff!important;background-color:#39cccc!important}.img_avatar{text-align:center;padding:10px 0}.emp-info{display: inline-block !important;vertical-align: middle;padding-left: 3px;font-size: 15px !important;color:black !important;}.emp-info label{margin:0}.emp-info strong{color:black !important;display: inline-block;}.headlineEmployeeCard{margin-top:10px !important;;margin-bottom:10px !important;font-weight:bolder !important;text-decoration:underline !important;font-size:20px !important;}.pad{padding:10px}.img-circle2{box-shadow:0 0 15px #333;-moz-box-shadow:0 0 15px #333;-webkit-box-shadow:0 0 10px #333;border-radius:20%}.row{margin-right:-15px;margin-left:-15px}.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9{position:relative;min-height:1px;padding-right:15px;padding-left:15px}.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9{float:left}.col-xs-12{width:100%}.col-xs-11{width:91.66666667%}.col-xs-10{width:83.33333333%}.col-xs-9{width:75%}.col-xs-8{width:66.66666667%}.col-xs-7{width:58.33333333%}.col-xs-6{width:50%}.col-xs-5{width:41.66666667%}.col-xs-4{width:33.33333333%}.col-xs-3{width:25%}.col-xs-2{width:16.66666667%}.col-xs-1{width:8.33333333%}@@media (min-width:768px){.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9{float:left}.col-sm-12{width:100%}.col-sm-11{width:91.66666667%}.col-sm-10{width:83.33333333%}.col-sm-9{width:75%}.col-sm-8{width:66.66666667%}.col-sm-7{width:58.33333333%}.col-sm-6{width:50%}.col-sm-5{width:41.66666667%}.col-sm-4{width:33.33333333%}.col-sm-3{width:25%}.col-sm-2{width:16.66666667%}.col-sm-1{width:8.33333333%}}@@media (min-width:992px){.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9{float:left}.col-md-12{width:100%}.col-md-11{width:91.66666667%}.col-md-10{width:83.33333333%}.col-md-9{width:75%}.col-md-8{width:66.66666667%}.col-md-7{width:58.33333333%}.col-md-6{width:50%}.col-md-5{width:41.66666667%}.col-md-4{width:33.33333333%}.col-md-3{width:25%}.col-md-2{width:16.66666667%}.col-md-1{width:8.33333333%}}@@media (min-width:1200px){.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9{float:left}.col-lg-12{width:100%}.col-lg-11{width:91.66666667%}.col-lg-10{width:83.33333333%}.col-lg-9{width:75%}.col-lg-8{width:66.66666667%}.col-lg-7{width:58.33333333%}.col-lg-6{width:50%}.col-lg-5{width:41.66666667%}.col-lg-4{width:33.33333333%}.col-lg-3{width:25%}.col-lg-2{width:16.66666667%}.col-lg-1{width:8.33333333%}}.row:after,.row:before{display:table;content:" "}.row:after{clear:both}@@media print{.col-sm-1,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-sm-10,.col-sm-11,.col-sm-12{float:left}.col-sm-12{width:100%}.col-sm-11{width:91.66666667%}.col-sm-10{width:83.33333333%}.col-sm-9{width:75%}.col-sm-8{width:66.66666667%}.col-sm-7{width:58.33333333%}.col-sm-6{width:50%}.col-sm-5{width:41.66666667%}.col-sm-4{width:33.33333333%}.col-sm-3{width:25%}.col-sm-2{width:16.66666667%}.col-sm-1{width:8.33333333%}}*{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}:after,:before{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}html{font-size:10px;-webkit-tap-highlight-color:rgba(0,0,0,0)}body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.42857143;color:#333;background-color:#fff}@@media print {div.bg-teal{background-color: #39cccc !important;-webkit-print-color-adjust: exact; }}@@media print {body {-webkit-print-color-adjust: exact;}}.table {width: 100%; max-width: 100%;margin-bottom: 20px;} table{border-spacing: 0;border-collapse: collapse;}.table-striped > tbody > tr:nth-of-type(odd) {background-color: #f9f9f9;}.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {padding: 8px;line-height: 1.42857143; vertical-align: top;}</style>');
+
+        frameDoc.document.write('<link href="../../../Content/Site_en.css" rel="stylesheet" />');
+        frameDoc.document.write('<link href="../../../Content/Site_en.css" rel="stylesheet" />');
+        frameDoc.document.write(contents);
+
+        frameDoc.document.write('</body></html>');
+        frameDoc.document.close();
+        setTimeout(function () {
+            window.frames["frame1"].focus();
+            window.frames["frame1"].print();
+            frame1.remove();
+        }, 500);
+
+
+    }
+
+    var SelectedPrivilegeList = [];
+
+    function InitializePrivilegesSelection() {
+        SelectedPrivilegeList = [];
+        $("#PrivilegeGrid").data("kendoGrid").dataSource.filter([]);
+        BindPrivilegeGrid();
+        $("#PrivilegeGrid .chkbx,#PrivilegesSelectAll").prop("checked", false)
+
+    }
+
+    function PrivilegeGrid_OnDataBound(e) {
+        if (SelectedPrivilegeList.length > 0) {
+            var grid = $('#PrivilegeGrid').data("kendoGrid");
+            var gridDataSource = grid.dataSource.data();
+            for (i = 0; i < gridDataSource.length; i++) {
+                if (SelectedPrivilegeList.indexOf(gridDataSource[i].Id) != -1) {
+                    grid.tbody.find(">tr:not(.k-grouping-row)").eq(i).find('.chkbx').prop("checked", true)
+                }
+                else {
+                    $("#PrivilegesSelectAll").prop("checked", false)
+                }
+            }
+        }
+    }
+
+    function BindPrivilegeGrid() {
+        $("#PrivilegeGrid").data("kendoGrid").dataSource.read();
+    }
+
+    function PrivilegeGrid_OnRowSelect(e) {
+        this.select().find('.chkbx').click();
+    }
+
+    function PrivilegesCheckAll(ele) {
+        var checked = $(ele).is(':checked');
+        $("#PrivilegeGrid .chkbx").prop("checked", checked)
+
+        var gridDataSource = $('#PrivilegeGrid').data("kendoGrid").dataSource.data();
+        for (var i = 0; i < gridDataSource.length; i++) {
+            if (checked) {
+                if (SelectedPrivilegeList.indexOf(gridDataSource[i].Id) == -1) {
+                    SelectedPrivilegeList[SelectedPrivilegeList.length] = gridDataSource[i].Id;
+                }
+            }
+            else
+                SelectedPrivilegeList.splice(SelectedPrivilegeList.indexOf(gridDataSource[i].Id), 1);
+        }
+    }
+    $("#AdminId").change(function (e) {
+        e.preventDefault();
+
+        if ($("#AdminId").data('kendoComboBox').value() > 0) {
+            NProgress.start();
+            $.ajax({
+                url: "@Url.Content("~/Ad_Page/ReadAdminPrivilegeData")",
+                type: "POST",
+                dataType: 'json',
+                data: {
+                    Id: $("#AdminId").data('kendoComboBox').value(),
+                }, success: function (result) {
+
+                    SelectedPrivilegeList = result.RoleIds;
+                    BindPrivilegeGrid();
+
+                    NProgress.done();
+                }
+            });
+
+        } else {
+            InitializePrivilegesSelection();
+        }
+    });
+
+    function SaveAdminPrivilege(e) {
+        e.preventDefault();
+        $("#AdminId").attr("data-val-required", "Field Required")
+        var validatable = $("#CreateAdminPrivilageForm").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            if (SelectedPrivilegeList.length == 0) {
+                Show_Message("notice", "Select At Least One privilege");
+                return;
+            }
+            else {
+                NProgress.start();
+                $("#BtnSaveAdminPrivilege").addClass("disabledButton");
+                $.ajax({
+                    url: "@Url.Content("~/Ad_Page/SaveAdminPrivilege")",
+                    type: 'POST',
+                    data: {
+                        Id: $("#AdminId").data('kendoComboBox').value(),
+
+                        RolesList: SelectedPrivilegeList,
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.Result) {
+                            Show_Message("success", result.Message);
+                            $('#CreateAdminPrivilageForm input').val('');
+                            $("#AdminId").data('kendoComboBox').value(null);
+
+                            NProgress.done();
+                            $("#BtnSaveAdminPrivilege").removeClass("disabledButton");
+                            InitializePrivilegesSelection()
+                        }
+                        else {
+                            Show_Message("error", result.Message);
+                            NProgress.done();
+                            $("#BtnSaveAdminPrivilege").removeClass("disabledButton");
+                        }
+
+                    },
+                    error: function (result) {
+                        Show_Message("error", "Saved Failed");
+                    }
+                });
+            }
+
+        }
+
+    }
+    if (Roles.indexOf(1) == -1) {
+        $("#Settings").hide();
+    }
+    if (Roles.indexOf(2) == -1) {
+        $("#SystemLog").hide();
+    }
+    if (Roles.indexOf(3) == -1) {
+        $("#CaseLog").hide();
+    }
+    if (Roles.indexOf(4) == -1) {
+        $("#CaseReplies").hide();
+    }
+
+
+    $("#FormConfigTabStrip").click(function (e) {
+        $("#FormConfigGrid").data("kendoGrid").dataSource.read();
+    });
+
+    function GridEdit(data) {
+        if (data.sender.element[0].id == 'FormConfigGrid') {
+
+            data.container.find("[name=SysPropName]").attr('readonly', true);
+
+        }
+    }
+
+    function SaveAttachment(e) {
+        e.preventDefault();
+        var formdata = new FormData();
+
+        if ($("#Attachements").data("kendoUpload").wrapper.find("input[type='file']")[0].files.length > 0) {
+
+
+            var Input1 = $("#Attachements").data("kendoUpload").wrapper.find("input[type='file']");
+            Input1.each(function (j) {
+                for (i = 0; i < Input1[j].files.length; i++) {
+                    formdata.append(1, Input1[j].files[i]);
+                }
+            });
+
+            $.ajax({
+                url: "@Url.Content("~/Ad_Page/SaveReportingPolicyAttachment")",
+                type: 'POST',
+                data: formdata,
+                processData: false, // tell jQuery not to process the data
+                contentType: false, // tell jQuery not to set contentType
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", result.Message);
+                        ResetKendoFileUpload();
+                        ReadAttachments();
+                    }
+                },
+                error: function (result) {
+                    Show_Message("error", "Saved Failed");
+                }
+            });
+
+        }
+        else {
+            Show_Message("error", "Select File");
+        }
+    }
+
+    function ReadAttachments() {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/ReadAttachments")",
+            type: 'POST',
+            data: {},
+            dataType: 'json',
+            success: function (result) {
+                if (result.length > 0) {
+                    Attachments = result;
+
+
+                }
+
+            },
+            error: function (result) {
+            }
+        })
+
+    }
+    var Attachments = [];
+
+    function ViewAttachment() {
+
+        if (Attachments[0] != null)
+            window.open(Attachments[0].URL);
+        else {
+            Show_Message("error", "Not Found File");
+        }
+
+
+    }
+
+    function ResetAttachment() {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/ResetReportingPolicyAttachment")",
+            type: 'POST',
+            data: {},
+            dataType: 'json',
+            success: function (result) {
+                if (result.Result) {
+                    Show_Message("success", result.Message);
+
+                    Attachments = [];
+                }
+                else {
+                    Show_Message("error", result.Message);
+
+                }
+            },
+            error: function (result) {
+            }
+        })
+    }
+    function onAdminCaseGridDataBound(arg) {
+
+        var grid = this;
+        grid.tbody.find('>tr').each(function () {
+            var dataItem = grid.dataItem(this);
+            if (dataItem.BackgroundColor != "") {
+                $(this).css('background', dataItem.BackgroundColor);
+            }
+
+        });
+
+
+    }
+
+    function DeleteLogo() {
+        if (confirm("Confirm Delete")) {
+            NProgress.start();
+            $.ajax({
+                url: "@Url.Content("~/Ad_Page/DeleteLogo")",
+                type: "POST",
+                dataType: 'json',
+                success: function (result) {
+                    if (result) {
+                        $('#LogoPhoto').attr('src', "/Content/dist/img/vector/newicon/SaibBank.png");
+
+                        $('#Logo').val('');
+                        Show_Message("success", "Delete Successfully");
+                        NProgress.done();
+                        GetLogo();
+                    }
+                },
+                error: function (result) {
+                    Show_Message("error", result.message);
+                    NProgress.done();
+                }
+            })
+        }
+    }
+    function ChooseLogo() {
+        $("#Logo").click();
+    }
+      $("#Logo").change(function () {
+        readLogoURL(this);
+    });
+    function readLogoURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#LogoPhoto').attr('src', e.target.result);
+
+            }
+            reader.readAsDataURL(input.files[0]);
+            var formdata = new FormData();
+            formdata.append(input.files[0].name, input.files[0]);
+            NProgress.start();
+            $.ajax({
+                url: "@Url.Content("~/Ad_Page/SaveLogo")",
+                processData: false,
+                contentType: false,
+                type: "Post",
+                data: formdata,
+                dataType: 'json',
+                success: function (result) {
+                    if (result) {
+                        Show_Message("success","Save Successfully");
+                        GetLogo();
+                        NProgress.done();
+
+                    }
+                },
+                error: function (result) {
+                    NProgress.done();
+                }
+            });
+        }
+    }
+    function FilterAssignAdminId() {
+        return {
+            Id: $("#AssignAdminId").data("kendoComboBox").value(),
+            text: $("#AssignAdminId").data("kendoComboBox").text(),
+        }
+    }
+     function AssignAdmin(e) {
+        e.preventDefault();
+        $("#AssignAdminId").attr("data-val-required", "Field Required")
+        var validatable = $("#DivAssignAdminRole").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+
+                NProgress.start();
+            $("#BtnAssign").addClass("disabledButton");
+                $.ajax({
+                    url: "@Url.Content("~/Ad_Page/AssignAdminRole")",
+                    type: 'POST',
+                    data: {
+                        Id: $("#AssignAdminId").data('kendoComboBox').value(),
+
+                    },
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.Result) {
+                            Show_Message("success", result.Message);
+                            $('#AssignAdminRoleTabStrip input').val('');
+                            $("#AssignAdminId").data('kendoComboBox').value(null);
+
+                            NProgress.done();
+                            $("#BtnAssign").removeClass("disabledButton");
+
+                            $("#AdminsGrid").data("kendoGrid").dataSource.read();
+
+                        }
+                        else {
+                            Show_Message("error", result.Message);
+                            NProgress.done();
+                            $("#BtnAssign").removeClass("disabledButton");
+                        }
+
+                    },
+                    error: function (result) {
+                        Show_Message("error", "Saved Failed");
+                        NProgress.done();
+
+                    }
+                });
+
+
+        }
+
+    }
+
+    function UnAssign(Id) {
+
+
+        NProgress.start();
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/UnAssignAdminRole")",
+            type: 'POST',
+            data: {
+                Id: Id,
+
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.Result) {
+                    Show_Message("success", result.Message);
+
+                    NProgress.done();
+
+                    $("#AdminsGrid").data("kendoGrid").dataSource.read();
+
+                }
+                else {
+                    Show_Message("error", result.Message);
+                    NProgress.done();
+                }
+
+            },
+            error: function (result) {
+                Show_Message("error", "Saved Failed");
+            }
+        });
+
+
+
+    }
+    $("#AssignAdminRoleTabStrip").click(function (e) {
+        $("#AdminsGrid").data("kendoGrid").dataSource.read();
+
+    });
+
+    function FilterAdminsEmail() {
+        return {
+            Id: $("#AdminsEmail").data('kendoMultiSelect').input.val(),
+            text: $("#AdminsEmail").data('kendoMultiSelect').input.val(),
+        }
+    }
+
+</script>
+
+<style>
+    .CaseLogLableC {
+        color: #b73232;
+    }
+</style>

@@ -1,0 +1,102 @@
+﻿
+.rightContent p{
+    margin-bottom:0px!important
+}
+.accData{
+    display:inline-block;width:200px;
+
+}
+.spanRight{
+    display: block; color: black; font-weight: 700;
+}
+.info4 .leftContent{
+     width: 40%;text-align: center;
+}
+.borderDashed{
+     border: dashed 1px black; 
+     margin-left: 30px; 
+     margin: 0px 70px;
+     margin-bottom:5px
+ }
+ .text-center{
+      text-align: center !important;
+  }
+  .info3 p{
+       font-weight: 700;
+       font-size: 14px;
+       text-align: center;
+       margin-top: 5px;
+       margin-bottom:30px;
+  }
+  .amountData{
+    font-weight: bolder;background: rgba(128, 128, 128, 0.28); padding-left: 5px;padding-top:3px;width: 80%;display: inline-block;}
+  .amount{
+     width: 150px !important; display: inline-block; font-weight: bold; color: black;
+
+  }
+  .text-right{
+      text-align: right !important;
+
+  }
+  .Pad-l0{
+      padding-left:0px !important;
+  }
+  .max-width{
+      width: 157px !important
+
+  }
+  .bg-gray{
+      background: gainsboro;
+  }
+  .no-border{
+      border: none!important;
+  }
+  h2{
+      color: #000040 !important;background-color: transparent !important;font-family: Tahoma !important;font-size: 33px !important; font-weight: 700 !important; font-style: normal !important;line-height: 62px;
+    margin-top:0px; margin-bottom:25px
+  }
+  .rightContent{
+      display: inline-block;
+      width: 50%;
+      color: gray;
+       font-weight: 600; 
+       font-size: 14px;
+  }
+  .leftContent{
+      vertical-align:top;
+      color: gray; 
+      font-weight: 600;
+       font-size: 14px;
+       display:inline-block
+  }
+  .table{
+      width: 100%;
+      max-width: 100%;
+      margin-bottom: 20px;
+  }
+  table{
+      border-spacing: 0;
+      border-collapse: collapse;
+  }
+  thead{
+      background:gainsboro
+
+  }
+.info2 {margin-top:15px}
+.info5 {margin-top:30px;margin-bottom:10px}
+.table-bordered > thead > tr > th {
+        border: 1px solid black;
+    }
+    .table-bordered > tbody > tr > td {
+        border: 1px solid black;
+    }
+
+.Pad-l0 {
+    padding-left: 0px !important;
+}
+.colorGray
+{color: #808080 !important;font-family: Lucida Sans !important;font-size: 13px !important;font-weight: bold !important;font-style: italic !important;
+}
+#lbltotalinwords{font-style: italic;}
+.fontItlic {font-style:italic;}
+.fontBolder {font-weight: bolder;}

@@ -1,0 +1,357 @@
+
+div.orgChart {
+    /*margin: 10px;
+    padding: 20px;*/
+}
+
+    div.orgChart h2 {
+        margin: 0px 0px 0px 0px;
+        font-size: 15px;
+        font-weight: normal;
+        /*min-height: 20px;*/
+        height: 30px;
+        padding-top: 10px;
+        margin-right: 10px;
+    }
+
+
+    div.orgChart span {
+        margin: 0px 0px 0px 0px;
+        font-size: 16px;
+        font-weight: normal;
+        /*min-height: 20px;*/
+        height: 30px;
+        padding-top: 10px;
+    }
+
+
+    div.orgChart h2:hover {
+        background: #fcfaca;
+        cursor: text;
+    }
+
+    div.orgChart ul {
+        list-style: none;
+        margin: 4px;
+        padding: 0px;
+        font-size: 0.8em;
+        text-align: left;
+    }
+
+        div.orgChart ul.stack,
+        div.orgChart ul.stack ul {
+            text-align: center;
+        }
+
+    div.orgChart table {
+        width: 100%;
+    }
+
+    div.orgChart tr.lines td.line {
+        width: 1px;
+        height: 20px;
+    }
+
+    div.orgChart tr.lines td.top {
+        border-top: 1px dashed black;
+    }
+
+    div.orgChart tr.lines td.left {
+        border-left: 1px dashed black;
+    }
+
+    div.orgChart tr.lines td.right {
+        border-right: 0px dashed black;
+    }
+
+    div.orgChart tr.lines td.half {
+        width: 50%;
+    }
+
+    div.orgChart td {
+        text-align: center;
+        vertical-align: top;
+        /*padding : 0px 2px;*/
+        padding: 0px 10px 0px 10px;
+    }
+
+    div.orgChart div.nodeJob {
+        cursor: default;
+        border: 1px solid #e7e7e7;
+        display: inline-block;
+        padding: 0 0 5px;
+        width: 160px;
+        height: 150px;
+        background: #fcfce7; /* Old browsers */ /* First color: dcf6eb fcfce7 */
+        border-color: #FFBD9E; /* First color: 8FE6C1 FFF69F*/
+        border-radius: 15px;
+        line-height: 1.3em;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        position: relative;
+        box-shadow: 1px 1px 0px #ddd;
+    }
+
+    div.orgChart div.node {
+        cursor: default;
+        border: 1px solid #e7e7e7;
+        display: inline-block;
+        /*padding: 5px;*/
+        width: 160px;
+        height: 130px;
+        background: #ecf8ee; /* Old browsers */ /* First color: dcf6eb fcfce7 */
+        border-color: #AAEFB6; /* First color: 8FE6C1 FFF69F*/
+        line-height: 1.3em;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        position: relative;
+        box-shadow: 1px 1px 0px #ddd;
+    }
+
+    div.orgChart div.nodeComp {
+        cursor: default;
+        border: 1px solid #e7e7e7;
+        display: inline-block;
+        padding: 5px;
+        width: 160px;
+        height: 130px;
+        background: #dcf6f6; /* Old browsers */
+        border-color: #8fe6d9;
+        line-height: 1.3em;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        position: relative;
+        box-shadow: 1px 1px 0px #ddd;
+    }
+
+    div.orgChart div.nodeDep {
+        cursor: default;
+        border: 1px solid #e7e7e7;
+        display: inline-block;
+        padding: 5px;
+        width: 160px;
+        height: 130px;
+        background: #f8ecf0; /* Old browsers */ /* First color: dcf6eb*/
+        border-color: #F095BB; /* First color: 8FE6C1*/
+        line-height: 1.3em;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        position: relative;
+        box-shadow: 1px 1px 0px #ddd;
+    }
+
+.org-add-button,
+.org-del-button,
+.org-plan-button,
+.org-plandel-button,
+.org-confirm-del-button {
+    position: absolute;
+    font-size: 12px;
+}
+
+.org-add-button {
+    bottom: 3px;
+    /*left: 60px;*/
+    right: 5px;
+    padding-right: 15px;
+    background: url('../Content/Images/AddNode.png') no-repeat 0 3px;
+    bottom: 2px;
+    background-position: 24px;
+
+}
+
+/*.org-plan-button {
+    background: url('../Content/Images/Plan.png') no-repeat 0 3px;
+        background-position: 3px;
+    bottom: 3px;*/
+    /*left: 60px;*/
+    /*right: 47px;
+    padding-left: 15px;
+}*/
+.org-plan-button {
+    background: url('../Content/Images/Plan.png') no-repeat 0 3px;
+    background-position: 3px;
+    width: 12px;
+    height: 16px;
+    bottom: 5px;
+    left: 94px;
+    padding-right: 15px;
+}
+
+.org-Image {
+    bottom: 3px;
+    right: 5px;
+    float: right;
+}
+
+
+.org-add-button:hover,
+.org-plan-button:hover,
+.org-plandel-button:hover,
+.org-del-button:hover {
+    background-color: #eef;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+/*.org-del-button {
+    background: url('../Content/Images/DeleteNode.png') no-repeat 0 3px;
+    width: 12px;
+    height: 16px;
+    bottom: 5px;
+    left: 0px;
+    padding-right: 15px;
+}*/
+/*.org-del-button {
+    background: url(../Content/Images/DeleteNode.png) no-repeat 0 3px;
+    width: 12px;
+    height: 16px;
+    bottom: 5px;
+    right: 40px;
+    padding-left: 15px;
+}*/
+.org-del-button {
+    background: url(../Content/Images/DeleteNode.png) no-repeat 0 3px;
+    width: 12px;
+    height: 16px;
+    bottom: 5px;
+    left: 36px;
+    padding-right: 15px;
+}
+
+.org-plandel-button {
+    background: url('../Content/Images/Plan.png') no-repeat 0 3px;
+    bottom: 3px;
+    right: 60px;
+    padding-right: 15px;
+    bottom: 2px;
+}
+
+.org-input {
+    width: 70%;
+    font-size: 16px;
+    font-weight: normal;
+    /* min-height: 20px; */
+    height: 20px;
+    margin: 12px 0;
+}
+
+.org-inputcode {
+    width: 55%;
+    font-size: 16px;
+    font-weight: normal;
+    /* min-height: 20px; */
+    height: 20px;
+    margin-right: 3px;
+    margin-top: -50px;
+    /*padding-top:-50px;*/
+}
+.org-inputplan {
+    width: 55%;
+    font-size: 16px;
+    font-weight: normal;
+    /* min-height: 20px; */
+    height: 20px;
+    margin-left: 3px;
+    margin-top: -50px;
+    /*padding-top:-50px;*/
+}
+
+.org-confirm-del-button {
+    display: none;
+}
+
+.web_dialog_overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #000000;
+    opacity: .15;
+    filter: alpha(opacity=15);
+    -moz-opacity: .15;
+    z-index: 101;
+    display: none;
+}
+
+.web_dialog {
+    display: none;
+    position: fixed;
+    width: 380px;
+    height: 200px;
+    top: 50%;
+    right: 50%;
+    margin-right: -190px;
+    margin-top: -100px;
+    background-color: #ffffff;
+    border: 2px solid #336699;
+    padding: 0px;
+    z-index: 102;
+    font-family: Verdana;
+    font-size: 10pt;
+}
+
+.web_dialog_title {
+    border-bottom: solid 2px #336699;
+    background-color: #336699;
+    padding: 4px;
+    color: White;
+    font-weight: bold;
+}
+
+    .web_dialog_title a {
+        color: White;
+        text-decoration: none;
+    }
+
+.align_right {
+    text-align: right;
+}
+
+
+div.AppearChartpanel {
+    display: none;
+}
+
+div.AppearAddpanel {
+    display: none;
+}
+
+.code {
+    margin-top: -17px;
+    font-weight: bold;
+    font-size: 12px;
+    padding-right: 36px;
+}
+
+.UnitCode {
+    margin-top: -28px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+
+.test {
+    float: right;
+    margin-top: -11px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+
+.actualClass {
+      position: relative;
+    font-size: 12px;
+    font-weight: 700;
+    right: 3px;
+        margin-top: 9px;
+}

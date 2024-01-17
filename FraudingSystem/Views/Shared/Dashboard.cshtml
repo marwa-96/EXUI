@@ -1,0 +1,134 @@
+﻿@using Kendo.Mvc.UI;
+
+
+<div class="col-md-6">
+    <div class="demo-section k-content wide">
+       
+         @(Html.Kendo().Chart<Ext_FraudingSystem.Models.Fraud_VM_CaseStatus>().AutoBind(false)
+                    .Name("StatusChart")
+                    .Title("Status Chart")
+                    .HtmlAttributes(new { @class = "small-chart", id = "CaseStatusClassification" })
+                    .ChartArea(x => x.Height(400))
+                    .DataSource(ds =>
+                    {
+                        ds.Read(read => read.Action("GetCasesStatusCount", "Ad_Page"));
+                    })
+                   .Series(s => s.Pie("Count", "CaseName", "").Labels(true))
+                   .Legend(true)
+                   .SeriesColors(new List<string> { "#4169E1", "#B0C4DE", "#4682B4","#87CEEB" })
+                   .Tooltip(tooltip => tooltip
+                   .Visible(true)
+                   .Format("{0:N0}")
+                   .Template("#= category # - #= value# Case"))
+                   )
+        <div class="col-md-12">
+            <div class="demo-section k-content wide" id="divContents2" style="align-content:center">
+                <ul class="track" id="divCount2"></ul>
+            </div>
+            <button id="ExportStatusChartToPDF" class="button" style="font-size:large; display:block ; margin: 0 auto; margin-left:100px; margin-bottom: 10px;">
+                <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Export To PDF
+            </button>
+
+            <button id="ExportStatusChartToImg" class="button" style="font-size:large; display:block ; margin: 0 auto; margin-left:100px;">
+                <i id="ExportStatusChartToImg" class=" fa fa-file-image-o" aria-hidden="true"></i> Export To Image
+            </button>
+        </div>
+        
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="demo-section k-content wide">
+
+        @(Html.Kendo().Chart<Ext_FraudingSystem.Models.Fraud_VM_LbelCases>().AutoBind(false)
+                    .Name("ClassificationChart")
+                    .Title("Classification Chart")
+                    .HtmlAttributes(new { @class = "small-chart", id = "LblCasesClassification" })
+                    .ChartArea(x => x.Height(400))
+                    .DataSource(ds =>
+                    {
+                        ds.Read(read => read.Action("GetLbelCasesSCount", "Ad_Page"));
+                    })
+                   .Series(s => s.Pie("Count", "Name", "").Labels(true))
+                   .Legend(true)
+                                                   .SeriesColors(new List<string> { "#FF7F50", "#B22222", "#CD5C5C", "#FFB6C1" })
+                   .Tooltip(tooltip => tooltip
+                   .Visible(true)
+                   .Format("{0:N0}")
+                   .Template("#= category # - #= value# Case"))
+        )
+        
+            <div class="col-md-6">
+                <div class="demo-section k-content wide" id="divContents" style="align-content:center">
+                    <ul class="track" id="divCount"></ul>
+                </div>
+                <button id="ExportClassificationChartToPDF" class="button" style="font-size:large; display:block ; margin: 0 auto; margin-left:100px; margin-bottom: 10px;">
+                    <i class="fa fa-file-pdf-o" aria-hidden="true"></i> Export To PDF
+                </button>
+
+                <button id="ExportClassificationChartToImg" class="button" style="font-size:large; display:block ; margin: 0 auto; margin-left:100px;">
+                    <i class="fa fa-file-image-o" aria-hidden="true"></i> Export To Image
+                </button>
+            </div>
+            
+        
+    </div>
+</div>
+
+<script>
+    function BubleChartRead()
+    {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetClassificationChartPercent")",
+            type: 'POST',
+        dataType: 'json',
+        success: function (result) {
+            if (result) {
+                $("#divCount").html("");
+
+                for (i = 0; i < result.Result.length; i++) {
+
+                    $("#divCount").append(
+
+                        ("<li class='active'>" + result.Result[i].LabelName + " <span class='in' style='background-color: #5ae811;'></span></a><span class='percent'> " + parseFloat(result.Result[i].Percent).toFixed(2) * 100 + " %</span></li>"));
+
+                }
+
+            }
+
+        },
+        error: function (result) {
+
+        }
+
+    });
+    }
+
+    function BubleStatusRead()
+    {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetStatusChartPercent")",
+            type: 'POST',
+        dataType: 'json',
+        success: function (result) {
+            if (result) {
+                $("#divCount2").html("");
+                
+                for (i = 0; i < result.Results.length; i++) {
+                    
+                    $("#divCount2").append(
+
+                        ("<li class='active'>" + result.Results[i].LabelName + " <span class='in' style='background-color: #5ae811;'></span></a><span class='percent'> " + parseFloat(result.Results[i].Percent).toFixed(2) * 100 + " %</span></li>"));
+
+                }
+
+            }
+
+        },
+        error: function (result) {
+            
+        }
+
+    });
+    }
+</script>

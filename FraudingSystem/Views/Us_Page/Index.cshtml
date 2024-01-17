@@ -1,0 +1,396 @@
+﻿@using Kendo.Mvc.UI
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.Hidden("FraudId", 0)
+<div class="row boxFixInKendo" style="margin-top:50px;">
+
+    <div class="col-sm-12 col-xs-12">
+        <h3 class="box-title">ColorGuide</h3>
+        <ul class="fc-color-picker" id="color-chooser" style="list-style: none;">
+            <li><div class="Read"><i class="fa fa-square" style="color: #ffffff; border-style: groove;"></i></div> Read</li>
+            <li><div class="Unread"><i class="fa fa-square" style="color: #dbdcdc; border-style: groove;"></i></div>Unread</li>
+
+        </ul>
+    </div>
+    <div class="col-sm-12 col-xs-12">
+
+        @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FraudCases>()
+                                                    .Name("UserCases")
+                                                    .Columns(columns =>
+                                                    {
+                                                        columns.Bound(p => p.Id).Hidden();
+                                                        columns.Bound(p => p.Title).Title("Title");
+                                                        columns.Bound(p => p.Case).Title("Case");
+                                                        columns.Bound(p => p.PeopleInvolved).Title("People Involved").Hidden();
+                                                        columns.Bound(p => p.PersonalInformation).Width(150).Title("Personal Name").Hidden();
+                                                        columns.Bound(p => p.PhoneNumber).Width(150).Title("Personal Phone Number").Hidden();                                                        //columns.Bound(p => p.When).Title("When").Hidden();
+                                                        columns.Bound(p => p._when).Title("When").Hidden().Width(200).ClientTemplate("#=_when?kendo.toString(kendo.parseDate(_when,'dd/MM/yyyy hh:mm:ss'),'dd/MM/yyyy hh:mm:ss'):''#");
+                                                        columns.Bound(p => p.Where).Title("Where").Hidden();
+
+                                                        //columns.Bound(p => p.IsCustomer).Title("Is Customer").ClientTemplate("# if (!data.IsCustomer ) {# No #}#" + " #if  (data.IsCustomer) {# yes #}#").Filterable(false).Hidden();
+                                                        columns.Bound(p => p.CustomerId).Title("Customer ID /Bank Account ").Hidden().Width(200);
+                                                        columns.Bound(p => p.CustomerName).Title("Customer Name").Hidden().Width(200);
+                                                        columns.Bound(p => p.CustomerNumber).Title("Customer Number").Hidden().Width(200);
+                                                        columns.Bound(p => p.EmployeeCode).Title("Empolyee Code").Hidden().Width(200);
+                                                        columns.Bound(p => p.EmployeeName).Title("Employee Name").Hidden().Width(200);
+                                                        columns.Bound(p => p.NonCustomerName).Title("Name").Hidden().Width(200);
+                                                        columns.Bound(p => p.NonCustomerPhoneNumber).Title("Phone Number").Hidden().Width(200);
+                                                        columns.Bound(p => p.CustomerId).Title("Customer ID /Bank Account ").Hidden();
+                                                        columns.Bound(p => p.CreatedDate).Title("Creation Date").ClientTemplate("#=kendo.toString(kendo.parseDate(CreatedDate,'dd/MM/yyyy hh:mm:ss'),'dd/MM/yyyy hh:mm:ss') #");
+                                                        columns.Bound(p=>p).Width(150).ClientTemplate(
+                                                        "# if(true){# <button class='k-button Gbouttons k-button-icontext'  type='button' onclick=\"UserReply('#:data.Id#')\">#}#"
+                                                      + "# if(true){ #<i class='fa fa-reply'></i>" + "Reply" + "#}#"
+                                                      + "</a>"
+
+                                                      +"# if (true) { #<button class='k-button Gbouttons k-button-icontext'  type='button' onclick='ShowUserAttachments(#:data.Id#)'>#}#"
+                                                      + "# if (true) { #<i class='fa fa-print'></i>" + "Attachments" + "#}#"
+                                                      + "</a>"
+
+                                                      //+ "# if (true) { #<button class='k-button Gbouttons k-button-icontext'  type='button' onclick='ShowUserAttachments(#:data.Id#)'>#}#"
+                                                      //+ "# if (true) { #<i class='fa fa-print'></i>" + "Attachments" + "#}#"
+                                                      //+ "</a>"
+
+                                                      //+ "# if (true) { #<button class='k-button Gbouttons k-button-icontext'  type='button' onclick='ShowUserCases(#:data.Id#)'>#}#"
+                                                      //+ "# if (true) { #<i class='fa fa-eye'></i>" + "View" + "#}#"
+                                                      ).ClientFooterTemplate("").Sortable(false).Filterable(false);
+                                                    })
+                                                    .ToolBar(tools =>
+                                                    {
+                                                        tools.Custom().Text("Display Columns").HtmlAttributes(new { id = "UserCasesColumnMenu", type = "button" });
+                                                        tools.Excel().Text("Export Excel");
+                                                    })
+                                                .ColumnMenu()
+                                             .Excel(excel => excel
+                                          .FileName("Cases.xlsx")
+                                            .AllPages(true)
+                                            .Filterable(true)
+                                            .ToString()
+                                            )
+                                             .Events(events =>
+                                                {
+                                                    events.DataBound("onUserCaseGridDataBound");
+                                                })
+                                            .Pageable(pageable => pageable
+                                                        .Messages(p =>
+                                                        {
+                                                            p.ItemsPerPage("items per page");
+                                                            p.Empty("No Item To Display");
+                                                            p.Display("{0} - {1} " + "From" + " {2} " + "item" + "");
+                                                        })
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(10))
+                                            .Sortable()
+                                                       .Filterable(ftb => ftb.Mode(GridFilterMode.Row))
+                                .Resizable(resizable => resizable.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(130))
+                                            .HtmlAttributes(new { style = "height:auto" })
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .ServerOperation(false)
+                                                .PageSize(10)
+                                                .Events(events => events.Error("error_handler"))
+                                                .Model(model => model.Id(p => p.Id))
+                                                                                                        .Read(read => read.Action("UserCases_Read", "Us_Page"))
+                                            )
+
+        )
+    </div>
+</div>
+@(Html.Kendo().Window().Name("UserCaseAttachmentsWindow").Title("Attachments")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false)
+                                         .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+
+                                        <div class="row boxFixInKendo">
+                                            <div class="col-sm-12 col-xs-12">
+
+                                                @(Html.Kendo().Grid<Ext_FraudingSystem.Models.FraudCasesAttachments>()
+                                                            .Name("UserCaseAttachmentsGrid")
+                                                    .Columns(columns =>
+                                            {
+                                                columns.Bound(p => p.Id).Hidden();
+                                                columns.Bound(p => p.FraudId).Hidden();
+                                                columns.Bound(p => p.URL).Hidden();
+                                                columns.Bound(p => p.AttachmentName).Width(100).Title("Attachments");
+                                                columns.Command(command => { command.Custom("View").Click("GetUserAttachments"); }).Title("Attachments").Width(80);
+                                            })
+
+                                            .AutoBind(false)
+                                            .Pageable(pageable => pageable
+
+                                                .Refresh(true)
+                                                .PageSizes(true)
+                                                .ButtonCount(5))
+                                            .Sortable()
+                                            .Filterable()
+                                .Resizable(resizable => resizable.Columns(true))
+                                                    .Scrollable(scrolling => scrolling.Height(130))
+                                            .HtmlAttributes(new { style = "height:auto" })
+                                            .DataSource(dataSource => dataSource
+                                                .Ajax()
+                                                .PageSize(5)
+                                                .Events(events => events.Error("error_handler"))
+                                                .Model(model => model.Id(p => p.Id))
+                                                                                                .Read(read => read.Action("AdminCaseAttachmentsGrid_Read", "Ad_Page").Data("SetFraudId"))
+
+                                            )
+
+                                                )
+                                            </div>
+
+                                        </div>
+
+                                    </text>)
+)
+
+@(Html.Kendo().Window().Name("UserReplyWindow").Title("Reply")
+                                    .Resizable()
+                                    .Modal(true)
+                                    .Iframe(true)
+                                    .Draggable(true)
+                                    .Visible(false).Scrollable(false)
+                                    .Actions(actions => actions.Close())
+                                    .Content(@<text>
+                                        <div class="group-box">
+                                            @Html.Label("Whistleblowing", new { @class = "group-box-title" })
+                                            <div style="overflow:hidden;">
+                                                <div  id="UserReplyCaseDiv">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="UserUsersReplyDiv">
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="group-box" style="margin:15px;">
+                                                @Html.Label("Your Reply", new { @class = "group-box-title" })
+                                                <div style="overflow:hidden;">
+                                                    <div class="col-sm-12 col-xs-12">
+                                                        @Html.Label("Reply")
+                                                        @Html.TextArea("UserReplyTextArea", new { @class = "k-textbox", style = "width:98%!important;height:80px;" })
+                                                    </div>
+                                                    <div class="col-sm-6 col-xs-12 " style="display:none;">
+                                                        @Html.Label("Attachments")
+                                                        @Html.Kendo().Upload().Name("USerReplyAttachments").Multiple(true).HtmlAttributes(new { style = "width:100%;height:30px;display:none" }).Messages(s => s.Select("Select File"))
+                                                        @Html.Label("Note:Please don't mention any informaion about your personal data or the case text in the attachment just supporting document", new { style = "padding-top:5px;color:rgba(0,0,0,.4);text-align: left;", @class = "GeneralBtnFloat" })
+                                                    </div>
+                                                    <div class="col-sm-6 col-xs-12">
+                                                        <div  >
+                                                            @(Html.Kendo().Button()
+                                                                                .Name("BtnUserReply")
+                                                                        .Events(e => e.Click("SaveUserReply"))
+                                                                        .HtmlAttributes(new { type = "button", style = "margin-top:10px ;", @class = "show" })
+                                                                        .Content("Save")
+                                                            )
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </text>)
+)
+
+
+
+<script>
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            Show_Message("error", message);
+        }
+    }
+    function UserReply(Id) {
+        $.ajax({
+            url: "@Url.Content("~/Us_Page/GetCaseDataAndReplys")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                FraudId: Id
+            },
+            success: function (result) {
+                $('#FraudId').val(Id);
+                $("#UserReplyCaseDiv").html(result.Case);
+                $("#UserUsersReplyDiv").html("");
+                if (result.Replys.length > 0) {
+                    for (i = 0; i < result.Replys.length ; i++) {
+                        if (result.Replys[i].Name != "" && result.Replys[i].Case != "")
+                            $("#UserUsersReplyDiv").append("<div class='group-box'> <label for='Test' class='group-box-title'>" + result.Replys[i].Name + "</label><div class='row boxFixInKendo'><div class='col-sm-9 col-xs-12'>" + result.Replys[i].Reply + "</div><div class='col-sm-3 col-xs-12'>" + new Date(parseInt(result.Replys[i].Date.substr(6))).toLocaleDateString() + " " + new Date(parseInt(result.Replys[i].Date.substr(6))).toLocaleTimeString() + "</div></div></div>");
+                    }
+                }
+                $("#UserReplyWindow").parent().css('width', "70%");
+                $("#UserReplyWindow").parent().css('height', "Auto");
+                $("#UserReplyWindow").data("kendoWindow").center().open();
+
+            },
+            error: function (result) {
+            }
+        })
+    }
+    function ShowUserAttachments(Id) {
+        $.ajax({
+            url: "@Url.Content("~/Ad_Page/GetOldAttachements")",
+            type: "POST",
+            dataType: 'json',
+            data: {
+                FraudId: Id
+            },
+            success: function (result) {
+                if (result.Attachs.length > 0) {
+                    $('#FraudId').val(Id);
+                    $("#UserCaseAttachmentsGrid").data("kendoGrid").dataSource.read()
+                    $("#UserCaseAttachmentsWindow").parent().css('width', "70%");
+                    $("#UserCaseAttachmentsWindow").parent().css('height', "Auto");
+                    $("#UserCaseAttachmentsWindow").data("kendoWindow").center().open();
+                }
+                else {
+                    Show_Message("info", "No Attachments Found");
+                }
+            },
+            error: function (result) {
+            }
+        })
+    }
+    //function ShowUserCases(Id) {
+
+    //}
+    function SetFraudId() {
+        return {
+            FraudId: $("#FraudId").val() == null ? 0 : $("#FraudId").val()
+        }
+    }
+    function GetUserAttachments(e) {
+        var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+        window.open(dataItem.URL.replace('~', '..'));
+    }
+    function DeleteUserAttachment(e) {
+        if (confirm("Are you sure you want to delete this item?")) {
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+            $.ajax({
+                url: "@Url.Content("~/Ad_Page/AdminCaseAttachmentsGrid_Destroy")",
+                type: 'POST',
+                data: {
+                    Id: dataItem.Id
+                },
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", "Deleted Successfully");
+                        $("#UserCaseAttachmentsGrid").data("kendoGrid").dataSource.read();
+
+                    }
+                    else {
+                        Show_Message("error", result.Message);
+                    }
+                },
+                error: function (result) {
+                }
+            })
+        }
+
+    }
+    function SaveUserReply(e) {
+        e.preventDefault();
+        $("#UserReplyTextArea").attr("data-val-required", "Field Required")
+        var validatable = $("#UserReplyWindow").kendoValidator({
+            errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation" style="margin:0.5em"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+        }).data("kendoValidator");
+        if (validatable.validate() === true) {
+            $("#BtnUserReply").addClass("disabledButton");
+            var formdata = new FormData();
+            var Input = $("#USerReplyAttachments").data("kendoUpload").wrapper.find("input[type='file']") // for Kendo file uploder
+            Input.each(function (j) {
+                for (i = 0; i < Input[j].files.length; i++) {
+                    formdata.append(Input[j].files[i].name, Input[j].files[i]);
+                }
+            })
+            formdata.append("FraudId", $("#FraudId").val());
+            formdata.append("Reply", $("#UserReplyTextArea").val());
+
+            $.ajax({
+                url: "@Url.Content("~/Us_Page/SaveUserReply")",
+                type: 'POST',
+                processData: false,  // tell jQuery not to process the data
+                contentType: false,   // tell jQuery not to set contentType
+
+                data: formdata,
+                dataType: 'json',
+                success: function (result) {
+                    if (result.Result) {
+                        Show_Message("success", "Saved Successfully");
+                        $('#UserReplyWindow input,textarea').val('');
+                        $("#UserCases").data("kendoGrid").dataSource.read();
+
+                        $("#UserReplyWindow").data("kendoWindow").close();
+                        ResetKendoFileUpload();
+
+                    }
+                    else {
+                        Show_Message("error", result.Message);
+                    }
+                    $("#BtnUserReply").removeClass("disabledButton");
+                },
+                error: function (result) {
+                    $("#BtnUserReply").removeClass("disabledButton");
+                }
+            })
+        }
+    }
+    $("#UserReplyWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#FraudId').val(0);
+           
+        }
+    })
+    $("#UserCaseAttachmentsWindow").kendoWindow({
+        close: function (e) {
+            e.preventDefault();
+            $('#FraudId').val(0);
+        }
+    })
+    $("#UserCasesColumnMenu").click(function (e) {
+        e.preventDefault();
+        var offset = $(this).offset();
+        $("#UserCases .k-header-column-menu:first").click();
+        $(".k-filter-item,.k-sort-asc,.k-sort-desc").hide();
+        $(".k-column-menu").parent().css({
+            top: offset.top + $(this).outerHeight(),
+            left: offset.left
+        });
+        $(".k-columns-item").trigger("mouseover")
+    });
+
+
+    function onUserCaseGridDataBound(arg) {
+
+        var grid = this;
+        grid.tbody.find('>tr').each(function () {
+            var dataItem = grid.dataItem(this);
+            if (dataItem.BackgroundColor != "") {
+                $(this).css('background', dataItem.BackgroundColor);
+            }
+
+        });
+
+
+    }
+
+</script>
