@@ -1058,6 +1058,25 @@
         e.preventDefault();
     }
     function SaveCase3() { 
+        $("#basicForm").validate({
+
+            rules: {
+                CaseTitle: {
+                    required: true,
+                    minlength: 3
+                },
+                LblCase: {
+                    required: true,
+                    minlength: 3
+                },
+                CaseWhere: {
+                    required: true,
+                },
+                When: {
+                    required: true,
+                },
+            }
+        });
         //e.preventDefault();
         console.log("gggg");
         var Title = search(formValue.Title, FormConfigurationArray);
